@@ -34,3 +34,22 @@
 - RED: 현재 액션은 실패를 모두 redirect 처리해 원인 추적이 어렵다 / 상태 타입 부재로 인라인 에러 관리 불가
 - GREEN: `src/app/login/types.ts`에 상태/에러코드/초기상태 정의
 - REFACTOR: 없음 / Slice 2에서 액션 전환과 함께 진행
+
+## Slice 2
+- Goal: 로그인 액션을 redirect 실패 흐름에서 상태 반환 흐름으로 전환한다.
+- Done criteria:
+  - `loginAction` 실패 시 `AuthActionState`를 반환한다.
+  - 성공 시에만 `/todos`로 redirect 한다.
+- Verification:
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 2)
+- RED: 로그인 실패 원인이 쿼리 리다이렉트로만 전달되어 네트워크 303 외에 관측 정보가 없다
+- GREEN: `loginAction`을 상태 반환 기반으로 전환하고 성공만 redirect 유지
+- REFACTOR: 과도기 호환을 위해 단일/이중 인자 처리 추가 (Slice 5에서 UI 연결 예정)
+
+## Fix Log (Slice 2)
+- Issue: `formAction` 타입이 `Promise<void>`만 허용해 `loginAction` 직접 연결 시 typecheck 실패
+- Cause: 상태 반환형 액션을 기존 서버 컴포넌트 버튼 `formAction`에 바로 연결
+- Fix: `loginActionRedirect(formData)` 어댑터를 추가해 현재 페이지는 void 액션을 사용
+- Re-verify: `bun run typecheck`

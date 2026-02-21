@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import { loginAction, signupAction } from "./actions";
+import { loginActionRedirect, signupAction } from "./actions";
 
 const errorLabelMap: Record<string, string> = {
   missing_credentials: "이메일과 비밀번호를 모두 입력해 주세요.",
@@ -65,7 +65,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button className="flex-1" formAction={loginAction} type="submit">
+            <Button className="flex-1" formAction={loginActionRedirect} type="submit">
               로그인
             </Button>
             <Button
