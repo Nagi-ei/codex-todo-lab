@@ -24,9 +24,22 @@
 2. GREEN: Supabase 클라이언트/서버 유틸, `/login`, `/todos`를 최소 구현한다.
 3. REFACTOR: 접근성/구조 정리 후 lint로 회귀 확인한다.
 
+## Replanned Slices (Branch Slice Execution Gate)
+1. Slice 1: RED 시나리오와 Auth action state 타입 정의
+2. Slice 2: login action 상태 반환 전환(redirect 실패 흐름 제거)
+3. Slice 3: signup action 상태 반환 + `/auth/check-email` 성공 분기
+4. Slice 4: shadcn Tabs 도입 및 인증 화면 골격 분리
+5. Slice 5: `LoginForm` 분리 + 인라인 에러
+6. Slice 6: `SignupForm` 분리 + 인라인 에러 + toast 보조
+7. Slice 7: 접근성/문구 리팩터 + lint/typecheck 재검증
+8. Slice 8: Playwright 인프라(`playwright.config.ts`) 추가
+9. Slice 9: E2E smoke(회원가입 -> 로그인 -> `/todos`) 작성/검증
+
 ## Used Skills
 - `tdd-thread-flow`
 - `git-commit-gitmoji`
+- `branch-slice-execution-gate`
+- `skill-creator`
 
 ## Implementation Notes
 - 주요 결정:
