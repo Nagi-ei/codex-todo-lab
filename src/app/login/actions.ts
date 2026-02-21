@@ -12,32 +12,10 @@ function readCredentials(formData: FormData) {
   return { email, password };
 }
 
-function resolveArgs(
-  first: AuthActionState | FormData,
-  second?: FormData,
-): { prevState: AuthActionState; formData: FormData } {
-  if (first instanceof FormData) {
-    return {
-      prevState: initialAuthActionState,
-      formData: first,
-    };
-  }
-
-  if (!second) {
-    throw new Error("Missing formData");
-  }
-
-  return {
-    prevState: first,
-    formData: second,
-  };
-}
-
-export async function loginAction(
-  first: AuthActionState | FormData,
-  second?: FormData,
+export async function loginActionState(
+  prevState: AuthActionState,
+  formData: FormData,
 ): Promise<AuthActionState> {
-  const { prevState, formData } = resolveArgs(first, second);
   const { email, password } = readCredentials(formData);
 
   if (!email || !password) {
@@ -65,7 +43,7 @@ export async function loginAction(
 }
 
 export async function loginActionRedirect(formData: FormData): Promise<void> {
-  const result = await loginAction(initialAuthActionState, formData);
+  const result = await loginActionState(initialAuthActionState, formData);
 
   if (result.status === "error") {
     redirect(`/login?error=${result.code ?? "unknown"}`);
@@ -81,10 +59,9 @@ export async function signupAction(formData: FormData) {
 }
 
 export async function signupActionState(
-  first: AuthActionState | FormData,
-  second?: FormData,
+  prevState: AuthActionState,
+  formData: FormData,
 ): Promise<AuthActionState> {
-  const { prevState, formData } = resolveArgs(first, second);
   const { email, password } = readCredentials(formData);
 
   if (!email || !password) {

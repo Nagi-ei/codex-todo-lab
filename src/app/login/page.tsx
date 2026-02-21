@@ -1,11 +1,12 @@
 import Link from "next/link";
 
 import { AuthTabs } from "@/components/auth/auth-tabs";
+import { LoginForm } from "@/components/auth/login-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import { loginActionRedirect, signupAction } from "./actions";
+import { signupAction } from "./actions";
 
 const errorLabelMap: Record<string, string> = {
   missing_credentials: "이메일과 비밀번호를 모두 입력해 주세요.",
@@ -42,60 +43,42 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <div className="mt-6">
           <AuthTabs
-            loginContent={
-              <p className="text-sm text-muted-foreground">
-                로그인 입력 폼 분리는 다음 슬라이스에서 진행합니다.
-              </p>
-            }
+            loginContent={<LoginForm />}
             signupContent={
-              <p className="text-sm text-muted-foreground">
-                회원가입 입력 폼 분리는 다음 슬라이스에서 진행합니다.
-              </p>
+              <form className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="signup-email">
+                    이메일
+                  </label>
+                  <Input
+                    id="signup-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="signup-password">
+                    비밀번호
+                  </label>
+                  <Input
+                    id="signup-password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                  />
+                </div>
+
+                <Button className="w-full" formAction={signupAction} type="submit" variant="secondary">
+                  회원가입
+                </Button>
+              </form>
             }
           />
         </div>
-
-        <form className="mt-6 space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="email">
-              이메일
-            </label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="password">
-              비밀번호
-            </label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button className="flex-1" formAction={loginActionRedirect} type="submit">
-              로그인
-            </Button>
-            <Button
-              className="flex-1"
-              formAction={signupAction}
-              type="submit"
-              variant="secondary"
-            >
-              회원가입
-            </Button>
-          </div>
-        </form>
 
         <p className="mt-6 text-sm text-muted-foreground">
           루트로 이동:{" "}

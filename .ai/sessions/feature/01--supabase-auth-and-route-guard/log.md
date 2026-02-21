@@ -81,3 +81,24 @@
 - RED: 로그인/회원가입 흐름이 한 폼에 결합되어 있어 사용자 흐름 분리가 약하다
 - GREEN: `Tabs` 컴포넌트와 `AuthTabs` 골격을 추가하고 `/login`에 탭을 배치
 - REFACTOR: 실제 폼 분리는 Slice 5/6로 분리해 변경 범위를 유지
+
+## Slice 5
+- Goal: 로그인 폼을 별도 컴포넌트로 분리하고 상태 기반 에러를 UI에 연결한다.
+- Done criteria:
+  - `LoginForm` 컴포넌트가 추가된다.
+  - 로그인 탭이 `useActionState` 기반 인라인 에러를 표시한다.
+  - 로그인 액션이 strict 시그니처(`prevState, formData`)로 사용된다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 5)
+- RED: 로그인 실패 시 사용자가 페이지 내 원인 메시지를 즉시 확인할 수 없다
+- GREEN: `LoginForm`을 client component로 분리하고 `loginActionState`를 연결
+- REFACTOR: 페이지에서 공용 단일 폼 제거, 탭 내부 로그인/회원가입 흐름 분리 시작
+
+## Fix Log (Slice 5)
+- Issue: `signupActionState`가 제거된 `resolveArgs` 참조로 typecheck 실패
+- Cause: login action 시그니처 리팩터 중 signup 쪽 종속 코드 정리를 누락
+- Fix: `signupActionState(prevState, formData)` strict 시그니처로 정리
+- Re-verify: `bun run lint && bun run typecheck`
