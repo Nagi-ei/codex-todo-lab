@@ -21,3 +21,16 @@
 - Gate check: 스킬에 hard-stop 조건(검증 미실행/로그 미기록/혼합 커밋) 명시
 - Commit check: `:gitmoji: type: summary` 커밋 계약 명시
 - Artifact check: slice/TDD/fix/commit checklist 템플릿 4종 포함
+
+## Slice 1
+- Goal: Auth 액션 상태 타입을 정의하고 RED 시나리오를 고정한다.
+- Done criteria:
+  - `AuthActionState`/`AuthErrorCode` 타입이 추가된다.
+  - 로그인/회원가입 실패 시나리오를 RED로 기록한다.
+- Verification:
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 1)
+- RED: 현재 액션은 실패를 모두 redirect 처리해 원인 추적이 어렵다 / 상태 타입 부재로 인라인 에러 관리 불가
+- GREEN: `src/app/login/types.ts`에 상태/에러코드/초기상태 정의
+- REFACTOR: 없음 / Slice 2에서 액션 전환과 함께 진행
