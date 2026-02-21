@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AuthTabs } from "@/components/auth/auth-tabs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,21 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             {errorMessage}
           </p>
         ) : null}
+
+        <div className="mt-6">
+          <AuthTabs
+            loginContent={
+              <p className="text-sm text-muted-foreground">
+                로그인 입력 폼 분리는 다음 슬라이스에서 진행합니다.
+              </p>
+            }
+            signupContent={
+              <p className="text-sm text-muted-foreground">
+                회원가입 입력 폼 분리는 다음 슬라이스에서 진행합니다.
+              </p>
+            }
+          />
+        </div>
 
         <form className="mt-6 space-y-4">
           <div className="space-y-2">

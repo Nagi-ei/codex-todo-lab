@@ -67,3 +67,17 @@
 - RED: 회원가입 성공/실패가 모두 303 리다이렉트로만 보여 원인/상태 구분이 어렵다
 - GREEN: `signupActionState` 추가, `signupAction`은 과도기 redirect 어댑터로 유지, `/auth/check-email` 라우트 추가
 - REFACTOR: 오류 코드 맵(`unknown`, `invalid_credentials`) 보강
+
+## Slice 4
+- Goal: 인증 화면에 shadcn Tabs 골격을 도입한다.
+- Done criteria:
+  - `tabs` UI 컴포넌트가 추가된다.
+  - 로그인 페이지에 로그인/회원가입 탭 구조가 렌더링된다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 4)
+- RED: 로그인/회원가입 흐름이 한 폼에 결합되어 있어 사용자 흐름 분리가 약하다
+- GREEN: `Tabs` 컴포넌트와 `AuthTabs` 골격을 추가하고 `/login`에 탭을 배치
+- REFACTOR: 실제 폼 분리는 Slice 5/6로 분리해 변경 범위를 유지
