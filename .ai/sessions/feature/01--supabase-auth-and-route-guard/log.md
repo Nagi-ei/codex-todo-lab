@@ -175,3 +175,19 @@
 - Cause: 프로젝트 이메일 확인 정책으로 가입 직후 로그인 불가
 - Fix: 테스트 실행 시 자동 이메일 확인 분기 추가 후 재로그인
 - Re-verify: `bun run test:e2e:smoke`
+
+## Slice 10
+- Goal: 인증 진입 경로를 `/auth`로 전환하고 페이지 UI 문구/하단 링크를 개선한다.
+- Done criteria:
+  - 인증 진입 주소가 `/auth`로 동작하고 `/login`은 호환 리다이렉트된다.
+  - 제목이 로그인 전용 문구가 아닌 인증 문구로 변경된다.
+  - 하단 홈 링크가 오른쪽 하단 버튼 형태로 표시된다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+  - `bun run test:e2e:smoke`
+
+## TDD Cycle (Slice 10)
+- RED: 인증 페이지 주소(`/login`)와 제목/하단 링크 UI가 현재 요구와 불일치
+- GREEN: `/app/auth/page.tsx` 도입, `/app/login/page.tsx`는 `/auth` 리다이렉트, 관련 링크/리다이렉트/E2E 경로 일괄 전환
+- REFACTOR: 기존 `/app/login/actions.ts`, `/app/login/types.ts` 제거 후 `/app/auth/*`로 참조 정리

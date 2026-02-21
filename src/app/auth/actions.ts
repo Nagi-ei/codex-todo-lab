@@ -8,7 +8,7 @@ import {
   createSupabaseAdminClient,
   shouldAutoConfirmEmails,
 } from "@/lib/supabase/admin";
-import type { AuthActionState } from "@/app/login/types";
+import type { AuthActionState } from "@/app/auth/types";
 
 function readCredentials(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();

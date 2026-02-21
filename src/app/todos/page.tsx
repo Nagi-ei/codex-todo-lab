@@ -13,7 +13,7 @@ export default async function TodosPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/auth");
   }
 
   return (

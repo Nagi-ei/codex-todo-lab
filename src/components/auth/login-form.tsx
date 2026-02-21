@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 
-import { loginActionState } from "@/app/login/actions";
-import { initialAuthActionState } from "@/app/login/types";
+import { loginActionState } from "@/app/auth/actions";
+import { initialAuthActionState } from "@/app/auth/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 

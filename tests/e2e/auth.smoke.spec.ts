@@ -5,7 +5,7 @@ test("@smoke auth signup then login success", async ({ page }) => {
   const email = `auth_smoke_${seed}@example.com`;
   const password = `Codex!${seed}`;
 
-  await page.goto("/login");
+  await page.goto("/auth");
 
   await page.getByRole("tab", { name: "회원가입" }).click();
   await page.locator("#signup-email").fill(email);
@@ -16,12 +16,12 @@ test("@smoke auth signup then login success", async ({ page }) => {
 
   if (page.url().endsWith("/todos")) {
     await page.getByRole("button", { name: "로그아웃" }).click();
-    await expect(page).toHaveURL(/\/login$/);
+    await expect(page).toHaveURL(/\/auth$/);
   }
 
   if (page.url().endsWith("/auth/check-email")) {
-    await page.getByRole("link", { name: "로그인으로 이동" }).click();
-    await expect(page).toHaveURL(/\/login$/);
+    await page.getByRole("link", { name: "인증으로 이동" }).click();
+    await expect(page).toHaveURL(/\/auth$/);
   }
 
   await page.getByRole("tab", { name: "로그인" }).click();

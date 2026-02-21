@@ -11,8 +11,8 @@
 - Supabase Auth(이메일 회원가입/로그인/로그아웃) 연결과 보호 라우트(`/todos`)를 최소 구현한다.
 
 ## Done Criteria
-1. `/login` 페이지에서 이메일/비밀번호 기반 회원가입/로그인 액션이 동작한다.
-2. `/todos` 접근 시 비인증 사용자는 `/login`으로 리디렉트된다.
+1. `/auth` 페이지에서 이메일/비밀번호 기반 회원가입/로그인 액션이 동작한다.
+2. `/todos` 접근 시 비인증 사용자는 `/auth`로 리디렉트된다.
 3. 인증 사용자는 `/todos` 화면과 로그아웃 액션을 사용할 수 있다.
 
 ## Out of Scope
@@ -34,6 +34,7 @@
 7. Slice 7: 접근성/문구 리팩터 + lint/typecheck 재검증
 8. Slice 8: Playwright 인프라(`playwright.config.ts`) 추가
 9. Slice 9: E2E smoke(회원가입 -> 로그인 -> `/todos`) 작성/검증
+10. Slice 10: `/login -> /auth` 경로 전환 및 인증 페이지 UI 문구/하단 버튼 정리
 
 ## Used Skills
 - `tdd-thread-flow`

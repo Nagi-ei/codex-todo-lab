@@ -3,8 +3,8 @@
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { signupActionState } from "@/app/login/actions";
-import { initialAuthActionState } from "@/app/login/types";
+import { signupActionState } from "@/app/auth/actions";
+import { initialAuthActionState } from "@/app/auth/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 

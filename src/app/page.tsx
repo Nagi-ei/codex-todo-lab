@@ -14,7 +14,7 @@ export default function Home() {
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button asChild className="flex-1">
-            <Link href="/login">로그인</Link>
+            <Link href="/auth">인증</Link>
           </Button>
           <Button asChild className="flex-1" variant="secondary">
             <Link href="/todos">Todos</Link>

@@ -12,7 +12,7 @@ export default function CheckEmailPage() {
           회원가입이 접수되었습니다. 메일함에서 확인 링크를 연 뒤 로그인해 주세요.
         </p>
         <Button asChild>
-          <Link href="/login">로그인으로 이동</Link>
+          <Link href="/auth">인증으로 이동</Link>
         </Button>
       </Card>
     </main>
