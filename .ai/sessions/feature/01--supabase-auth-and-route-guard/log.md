@@ -102,3 +102,18 @@
 - Cause: login action 시그니처 리팩터 중 signup 쪽 종속 코드 정리를 누락
 - Fix: `signupActionState(prevState, formData)` strict 시그니처로 정리
 - Re-verify: `bun run lint && bun run typecheck`
+
+## Slice 6
+- Goal: 회원가입 폼을 별도 컴포넌트로 분리하고 toast 보조 피드백을 연결한다.
+- Done criteria:
+  - `SignupForm` 컴포넌트가 추가된다.
+  - 회원가입 탭이 상태 기반 인라인 에러를 표시한다.
+  - 실패 시 toast 에러가 보조로 노출된다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 6)
+- RED: 회원가입 실패 원인이 탭 컨텍스트에서 명확하게 고정되지 않는다
+- GREEN: `SignupForm` 분리, `useActionState(signupActionState)` 연결, 실패 시 인라인 + toast 노출
+- REFACTOR: 레이아웃에 `Toaster`를 마운트해 전역 toast 채널 활성화

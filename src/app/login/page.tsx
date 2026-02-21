@@ -2,11 +2,8 @@ import Link from "next/link";
 
 import { AuthTabs } from "@/components/auth/auth-tabs";
 import { LoginForm } from "@/components/auth/login-form";
-import { Button } from "@/components/ui/button";
+import { SignupForm } from "@/components/auth/signup-form";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-
-import { signupAction } from "./actions";
 
 const errorLabelMap: Record<string, string> = {
   missing_credentials: "이메일과 비밀번호를 모두 입력해 주세요.",
@@ -44,39 +41,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="mt-6">
           <AuthTabs
             loginContent={<LoginForm />}
-            signupContent={
-              <form className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="signup-email">
-                    이메일
-                  </label>
-                  <Input
-                    id="signup-email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium" htmlFor="signup-password">
-                    비밀번호
-                  </label>
-                  <Input
-                    id="signup-password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                  />
-                </div>
-
-                <Button className="w-full" formAction={signupAction} type="submit" variant="secondary">
-                  회원가입
-                </Button>
-              </form>
-            }
+            signupContent={<SignupForm />}
           />
         </div>
 
