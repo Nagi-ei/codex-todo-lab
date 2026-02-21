@@ -206,3 +206,58 @@
 - RED: 동작 흐름 구현 후 완성도 향상 단계가 스킬에 명시적으로 강제되지 않음
 - GREEN: SKILL.md에 hardening gate/hard-stop/template를 추가하고 `agents/openai.yaml` 생성
 - REFACTOR: `$` 노출 경로(agents metadata) 기준에 맞게 전역 스킬 구조 정리
+
+## Slice 12A
+- Goal: Auth 에러 계약을 고정하고 개발자 관측 필드를 포함한다.
+- Done criteria:
+  - `AuthActionState`에 `debug_reason` 필드가 추가된다.
+  - login/signup 에러 매핑이 코드 중심으로 정규화된다.
+- Verification:
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 12A)
+- RED: raw provider message/형식이 UI와 디버깅 목적에 일관되지 않음
+- GREEN: `debug_reason` 추가 및 액션 에러 매핑 표준화
+- REFACTOR: 사용자 메시지는 일반화하고 디버깅 정보는 분리
+
+## Slice 12B
+- Goal: 로그인 폼을 toast-only 에러 처리로 전환한다.
+- Done criteria:
+  - 로그인 인라인 에러가 제거된다.
+  - 로그인 실패 시 toast만 노출된다.
+  - 개발 모드에서 code/debug_reason 로그가 남는다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 12B)
+- RED: 로그인 실패 메시지가 인라인으로 표시되어 toast 정책과 불일치
+- GREEN: `LoginForm`을 `toast.error` 기반으로 전환
+- REFACTOR: 중복 토스트 방지 키를 적용
+
+## Slice 12C
+- Goal: 회원가입 폼 에러 정책을 login과 동일하게 통일한다.
+- Done criteria:
+  - 회원가입 인라인 에러가 제거된다.
+  - 회원가입 실패 시 toast-only 정책이 적용된다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 12C)
+- RED: signup은 toast+inline 혼합, login은 정책 불일치
+- GREEN: `SignupForm` 인라인 제거 및 toast-only 통일
+- REFACTOR: login과 동일한 디버그 로그/중복 방지 처리 적용
+
+## Slice 12D (Hardening)
+- Goal: wrong-password 실패 시나리오를 E2E로 고정한다.
+- Done criteria:
+  - `@smoke` 실패 케이스(틀린 비밀번호)가 추가된다.
+  - 실패 시 toast 메시지 표시를 검증한다.
+- Verification:
+  - `bun run test:e2e:smoke`
+
+## TDD Cycle (Slice 12D)
+- RED: 실패 경로가 smoke suite에서 보장되지 않음
+- GREEN: wrong-password smoke 테스트 추가
+- REFACTOR: 가입/로그아웃/오입력 로그인 흐름을 재사용해 안정화
