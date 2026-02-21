@@ -117,3 +117,24 @@
 - RED: 회원가입 실패 원인이 탭 컨텍스트에서 명확하게 고정되지 않는다
 - GREEN: `SignupForm` 분리, `useActionState(signupActionState)` 연결, 실패 시 인라인 + toast 노출
 - REFACTOR: 레이아웃에 `Toaster`를 마운트해 전역 toast 채널 활성화
+
+## Slice 7
+- Goal: 액션/문구를 리팩터링하고 쿼리파라미터 기반 오류 흐름을 제거한다.
+- Done criteria:
+  - 로그인/회원가입 액션에 에러 매핑 함수가 적용된다.
+  - `/login`이 `searchParams` 기반 오류 렌더링 없이 동작한다.
+  - lint/typecheck가 통과한다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 7)
+- RED: 쿼리파라미터 에러 표시는 303 리다이렉트 의존도가 높고 탭 기반 UX와 충돌한다
+- GREEN: `toLoginErrorState`/`toSignupErrorState`를 추가해 액션 내 에러 매핑을 고정
+- REFACTOR: `/login`에서 query error 렌더링 제거, 인라인 상태 렌더링 경로만 유지
+
+## Fix Log (Slice 7)
+- Issue: `signupAction` 래퍼가 제거된 초기 상태 상수를 참조해 typecheck 실패
+- Cause: 상태 기반 폼 전환 후 남은 과도기 래퍼 정리 누락
+- Fix: 더 이상 사용하지 않는 `signupAction` 리다이렉트 래퍼 제거
+- Re-verify: `bun run lint && bun run typecheck`

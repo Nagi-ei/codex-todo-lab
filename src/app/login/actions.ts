@@ -1,9 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type { AuthError } from "@supabase/supabase-js";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { initialAuthActionState, type AuthActionState } from "@/app/login/types";
+import type { AuthActionState } from "@/app/login/types";
 
 function readCredentials(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -31,31 +32,10 @@ export async function loginActionState(
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return {
-      ...prevState,
-      status: "error",
-      code: "invalid_credentials",
-      message: "로그인에 실패했습니다. 이메일/비밀번호를 확인해 주세요.",
-    };
+    return toLoginErrorState(prevState, error);
   }
 
   redirect("/todos");
-}
-
-export async function loginActionRedirect(formData: FormData): Promise<void> {
-  const result = await loginActionState(initialAuthActionState, formData);
-
-  if (result.status === "error") {
-    redirect(`/login?error=${result.code ?? "unknown"}`);
-  }
-}
-
-export async function signupAction(formData: FormData) {
-  const result = await signupActionState(initialAuthActionState, formData);
-
-  if (result.status === "error") {
-    redirect(`/login?error=${result.code ?? "unknown"}`);
-  }
 }
 
 export async function signupActionState(
@@ -77,12 +57,7 @@ export async function signupActionState(
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    return {
-      ...prevState,
-      status: "error",
-      code: "signup_failed",
-      message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-    };
+    return toSignupErrorState(prevState, error);
   }
 
   if (!data.session) {
@@ -90,4 +65,51 @@ export async function signupActionState(
   }
 
   redirect("/todos");
+}
+
+function toLoginErrorState(
+  prevState: AuthActionState,
+  error: AuthError,
+): AuthActionState {
+  const message = error.message.toLowerCase();
+  const isEmailNotConfirmed = message.includes("email not confirmed");
+
+  if (isEmailNotConfirmed) {
+    return {
+      ...prevState,
+      status: "error",
+      code: "email_not_confirmed",
+      message: "이메일 확인 후 로그인해 주세요.",
+    };
+  }
+
+  return {
+    ...prevState,
+    status: "error",
+    code: "invalid_credentials",
+    message: "로그인에 실패했습니다. 이메일/비밀번호를 확인해 주세요.",
+  };
+}
+
+function toSignupErrorState(
+  prevState: AuthActionState,
+  error: AuthError,
+): AuthActionState {
+  const message = error.message.toLowerCase();
+
+  if (message.includes("already registered")) {
+    return {
+      ...prevState,
+      status: "error",
+      code: "signup_failed",
+      message: "이미 가입된 이메일입니다. 로그인해 주세요.",
+    };
+  }
+
+  return {
+    ...prevState,
+    status: "error",
+    code: "signup_failed",
+    message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+  };
 }
