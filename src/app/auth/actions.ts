@@ -29,6 +29,7 @@ export async function loginActionState(
       status: "error",
       code: "missing_credentials",
       message: "이메일과 비밀번호를 모두 입력해 주세요.",
+      debug_reason: "missing_credentials",
     };
   }
 
@@ -54,6 +55,7 @@ export async function signupActionState(
       status: "error",
       code: "missing_credentials",
       message: "이메일과 비밀번호를 모두 입력해 주세요.",
+      debug_reason: "missing_credentials",
     };
   }
 
@@ -134,6 +136,7 @@ function toLoginErrorState(
       status: "error",
       code: "email_not_confirmed",
       message: "이메일 확인 후 로그인해 주세요.",
+      debug_reason: error.message,
     };
   }
 
@@ -141,7 +144,8 @@ function toLoginErrorState(
     ...prevState,
     status: "error",
     code: "invalid_credentials",
-    message: `로그인에 실패했습니다. (${error.message})`,
+    message: "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.",
+    debug_reason: error.message,
   };
 }
 
@@ -157,7 +161,18 @@ function toSignupErrorState(
       ...prevState,
       status: "error",
       code: "signup_failed",
-      message: `이미 가입된 이메일입니다. 로그인해 주세요. (${source})`,
+      message: "이미 가입된 이메일입니다. 로그인해 주세요.",
+      debug_reason: `${source}: ${error.message}`,
+    };
+  }
+
+  if (message.includes("rate limit")) {
+    return {
+      ...prevState,
+      status: "error",
+      code: "signup_failed",
+      message: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
+      debug_reason: `${source}: ${error.message}`,
     };
   }
 
@@ -165,6 +180,7 @@ function toSignupErrorState(
     ...prevState,
     status: "error",
     code: "signup_failed",
-    message: `회원가입에 실패했습니다. (${source}: ${error.message})`,
+    message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    debug_reason: `${source}: ${error.message}`,
   };
 }

@@ -9,6 +9,7 @@ export type AuthActionState = {
   status: "idle" | "error";
   code?: AuthErrorCode;
   message?: string;
+  debug_reason?: string;
 };
 
 export const initialAuthActionState: AuthActionState = {
