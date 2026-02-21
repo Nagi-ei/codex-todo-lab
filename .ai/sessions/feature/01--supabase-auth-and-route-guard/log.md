@@ -191,3 +191,18 @@
 - RED: 인증 페이지 주소(`/login`)와 제목/하단 링크 UI가 현재 요구와 불일치
 - GREEN: `/app/auth/page.tsx` 도입, `/app/login/page.tsx`는 `/auth` 리다이렉트, 관련 링크/리다이렉트/E2E 경로 일괄 전환
 - REFACTOR: 기존 `/app/login/actions.ts`, `/app/login/types.ts` 제거 후 `/app/auth/*`로 참조 정리
+
+## Slice 11
+- Goal: `branch-slice-execution-gate` 스킬에 하드닝 단계 강제를 추가하고 `$` 노출 메타데이터를 보완한다.
+- Done criteria:
+  - 스킬에 happy-path 이후 hardening slice 필수 규칙이 추가된다.
+  - `agents/openai.yaml`이 생성된다.
+  - `$` 노출 누락 원인을 문서화한다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 11)
+- RED: 동작 흐름 구현 후 완성도 향상 단계가 스킬에 명시적으로 강제되지 않음
+- GREEN: SKILL.md에 hardening gate/hard-stop/template를 추가하고 `agents/openai.yaml` 생성
+- REFACTOR: `$` 노출 경로(agents metadata) 기준에 맞게 전역 스킬 구조 정리
