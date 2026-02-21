@@ -9,7 +9,9 @@ import { loginActionRedirect, signupAction } from "./actions";
 const errorLabelMap: Record<string, string> = {
   missing_credentials: "이메일과 비밀번호를 모두 입력해 주세요.",
   login_failed: "로그인에 실패했습니다. 입력값을 확인해 주세요.",
+  invalid_credentials: "로그인에 실패했습니다. 이메일/비밀번호를 확인해 주세요.",
   signup_failed: "회원가입에 실패했습니다. 다시 시도해 주세요.",
+  unknown: "요청 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.",
 };
 
 type LoginPageProps = {

@@ -73,17 +73,43 @@ export async function loginActionRedirect(formData: FormData): Promise<void> {
 }
 
 export async function signupAction(formData: FormData) {
+  const result = await signupActionState(initialAuthActionState, formData);
+
+  if (result.status === "error") {
+    redirect(`/login?error=${result.code ?? "unknown"}`);
+  }
+}
+
+export async function signupActionState(
+  first: AuthActionState | FormData,
+  second?: FormData,
+): Promise<AuthActionState> {
+  const { prevState, formData } = resolveArgs(first, second);
   const { email, password } = readCredentials(formData);
 
   if (!email || !password) {
-    redirect("/login?error=missing_credentials");
+    return {
+      ...prevState,
+      status: "error",
+      code: "missing_credentials",
+      message: "이메일과 비밀번호를 모두 입력해 주세요.",
+    };
   }
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    redirect("/login?error=signup_failed");
+    return {
+      ...prevState,
+      status: "error",
+      code: "signup_failed",
+      message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    };
+  }
+
+  if (!data.session) {
+    redirect("/auth/check-email");
   }
 
   redirect("/todos");

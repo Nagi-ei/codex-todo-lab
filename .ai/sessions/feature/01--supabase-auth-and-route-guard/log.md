@@ -53,3 +53,17 @@
 - Cause: 상태 반환형 액션을 기존 서버 컴포넌트 버튼 `formAction`에 바로 연결
 - Fix: `loginActionRedirect(formData)` 어댑터를 추가해 현재 페이지는 void 액션을 사용
 - Re-verify: `bun run typecheck`
+
+## Slice 3
+- Goal: 회원가입 액션을 상태 반환 기반으로 전환하고 성공 흐름을 분기한다.
+- Done criteria:
+  - `signupAction` 실패 시 상태를 반환한다.
+  - 회원가입 성공 시 세션 유무에 따라 `/todos` 또는 `/auth/check-email`로 이동한다.
+  - `/auth/check-email` 안내 페이지를 제공한다.
+- Verification:
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 3)
+- RED: 회원가입 성공/실패가 모두 303 리다이렉트로만 보여 원인/상태 구분이 어렵다
+- GREEN: `signupActionState` 추가, `signupAction`은 과도기 redirect 어댑터로 유지, `/auth/check-email` 라우트 추가
+- REFACTOR: 오류 코드 맵(`unknown`, `invalid_credentials`) 보강
