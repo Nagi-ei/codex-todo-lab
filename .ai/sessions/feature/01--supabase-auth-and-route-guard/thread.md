@@ -40,6 +40,9 @@
 - `git-commit-gitmoji`
 - `branch-slice-execution-gate`
 - `skill-creator`
+- `frontend-ui-global`
+- `e2e-smoke-gate`
+- `playwright`
 
 ## Implementation Notes
 - 주요 결정:

@@ -5,6 +5,9 @@
 - `git-commit-gitmoji`
 - `branch-slice-execution-gate`
 - `skill-creator`
+- `frontend-ui-global`
+- `e2e-smoke-gate`
+- `playwright`
 
 ## TDD Cycle 1
 - RED: `/todos` 비인증 접근 시 차단 실패 시나리오 정의 / 현재 보호 라우트가 없어 접근 차단 불가
@@ -153,3 +156,22 @@
 - RED: E2E 스크립트는 package.json에 있으나 설정/프레임워크 파일 부재로 실행 불가
 - GREEN: `@playwright/test` 설치 및 `playwright.config.ts` 생성
 - REFACTOR: 테스트 기준 URL/포트와 webServer 동작을 명시적으로 고정
+
+## Slice 9
+- Goal: 회원가입 -> 로그인 -> `/todos` 진입 E2E smoke를 구현하고 통과시킨다.
+- Done criteria:
+  - `tests/e2e/auth.smoke.spec.ts`가 추가된다.
+  - `bun run test:e2e:smoke`에서 auth smoke가 통과한다.
+- Verification:
+  - `bun run test:e2e:smoke`
+
+## TDD Cycle (Slice 9)
+- RED: 신규 가입 계정으로 즉시 로그인 시 `/login`에 머물며 E2E 실패
+- GREEN: auth smoke 스펙 추가 및 자동 확인 메일 환경 분기(`SUPABASE_AUTO_CONFIRM_EMAILS=true`) 적용
+- REFACTOR: auto-confirm 로직을 `supabase/admin` 유틸로 분리
+
+## Fix Log (Slice 9)
+- Issue: E2E에서 로그인 후 `/todos` 진입 실패(계속 `/login`)
+- Cause: 프로젝트 이메일 확인 정책으로 가입 직후 로그인 불가
+- Fix: 테스트 실행 시 자동 이메일 확인 분기 추가 후 재로그인
+- Re-verify: `bun run test:e2e:smoke`
