@@ -7,6 +7,7 @@
 4. 실패 시 원인/수정사항/재검증 결과를 기록한다.
 5. 새 작업 시작 시 `/Users/nagi/Downloads/codex-test/docs/MASTER-PLAN.md`, `/Users/nagi/Downloads/codex-test/docs/PRD.md`, `/Users/nagi/Downloads/codex-test/docs/BRANCH-DEVELOPMENT-PLAN.md`, 현재 브랜치 세션 폴더 로그를 먼저 읽는다.
 6. 매 작업에서 실제 사용한 스킬 이름을 요약에 명시한다.
+7. 작업이 특정 스킬의 범위와 일치하면 반드시 해당 스킬을 사용한다.
 
 ## Scope Discipline
 1. 플랜에 명시된 기능만 구현한다.
