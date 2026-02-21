@@ -138,3 +138,18 @@
 - Cause: 상태 기반 폼 전환 후 남은 과도기 래퍼 정리 누락
 - Fix: 더 이상 사용하지 않는 `signupAction` 리다이렉트 래퍼 제거
 - Re-verify: `bun run lint && bun run typecheck`
+
+## Slice 8
+- Goal: Auth E2E smoke를 위한 Playwright 인프라를 추가한다.
+- Done criteria:
+  - `@playwright/test`가 dev dependency로 설치된다.
+  - `playwright.config.ts`가 추가된다.
+  - 로컬 웹서버 기반 실행 설정이 고정된다.
+- Verification:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 8)
+- RED: E2E 스크립트는 package.json에 있으나 설정/프레임워크 파일 부재로 실행 불가
+- GREEN: `@playwright/test` 설치 및 `playwright.config.ts` 생성
+- REFACTOR: 테스트 기준 URL/포트와 webServer 동작을 명시적으로 고정
