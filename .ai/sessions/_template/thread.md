@@ -24,6 +24,9 @@
 2.
 3.
 
+## Used Skills
+- 실제 사용한 스킬 이름을 기록 (예: `frontend-ui`, `supabase-rls-guard`)
+
 ## Implementation Notes
 - 주요 결정:
 - 변경 파일:

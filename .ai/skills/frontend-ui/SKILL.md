@@ -1,9 +1,9 @@
 ---
-name: frontend-ui-project
+name: frontend-ui
 description: Implement or refactor UI in this repository using shadcn/ui and TailwindCSS v4. Prefer Next.js Server Components, use Client Components only when needed, and avoid server/data-layer changes unless explicitly requested.
 ---
 
-# Frontend UI (Project)
+# Frontend UI
 
 Use this skill for UI work in this project.
 
