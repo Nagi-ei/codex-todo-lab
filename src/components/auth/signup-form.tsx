@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
+import { useRef } from "react";
 import { toast } from "sonner";
 
 import { signupActionState } from "@/app/auth/actions";
@@ -13,10 +14,27 @@ export function SignupForm() {
     signupActionState,
     initialAuthActionState,
   );
+  const latestToastKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (state.status === "error" && state.message) {
-      toast.error(state.message);
+    if (state.status !== "error" || !state.message) {
+      return;
+    }
+
+    const toastKey = `${state.code ?? "unknown"}:${state.message}`;
+
+    if (latestToastKeyRef.current === toastKey) {
+      return;
+    }
+
+    latestToastKeyRef.current = toastKey;
+    toast.error(state.message);
+
+    if (process.env.NODE_ENV !== "production") {
+      console.debug("[auth][signup]", {
+        code: state.code,
+        debug_reason: state.debug_reason,
+      });
     }
   }, [state]);
 
@@ -47,15 +65,6 @@ export function SignupForm() {
           required
         />
       </div>
-
-      {state.status === "error" && state.message ? (
-        <p
-          className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
-          role="alert"
-        >
-          {state.message}
-        </p>
-      ) : null}
 
       <Button className="w-full" disabled={isPending} type="submit" variant="secondary">
         {isPending ? "가입 처리 중..." : "회원가입"}

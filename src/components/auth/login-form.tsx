@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 import { loginActionState } from "@/app/auth/actions";
 import { initialAuthActionState } from "@/app/auth/types";
@@ -12,6 +13,29 @@ export function LoginForm() {
     loginActionState,
     initialAuthActionState,
   );
+  const latestToastKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (state.status !== "error" || !state.message) {
+      return;
+    }
+
+    const toastKey = `${state.code ?? "unknown"}:${state.message}`;
+
+    if (latestToastKeyRef.current === toastKey) {
+      return;
+    }
+
+    latestToastKeyRef.current = toastKey;
+    toast.error(state.message);
+
+    if (process.env.NODE_ENV !== "production") {
+      console.debug("[auth][login]", {
+        code: state.code,
+        debug_reason: state.debug_reason,
+      });
+    }
+  }, [state]);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -40,15 +64,6 @@ export function LoginForm() {
           required
         />
       </div>
-
-      {state.status === "error" && state.message ? (
-        <p
-          className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
-          role="alert"
-        >
-          {state.message}
-        </p>
-      ) : null}
 
       <Button className="w-full" disabled={isPending} type="submit">
         {isPending ? "로그인 중..." : "로그인"}
