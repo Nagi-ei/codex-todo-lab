@@ -29,9 +29,10 @@
 8. `log.md`와 `handoff.md`에는 `used_skills` 섹션을 필수로 남긴다.
 
 ## Quality Gates
-1. PR 전 `npm run typecheck`, `npm run test:unit`, `npm run test:e2e:smoke`를 통과해야 한다.
-2. 접근성 기본 체크(라벨, 키보드 포커스, 콘트라스트)를 수행한다.
-3. 보안 규칙: 비밀키는 서버 전용, 클라이언트 노출 금지.
+1. PR 전 `bun run verify`를 우선 실행한다.
+2. 필요 시 `bun run typecheck`, `bun run test:unit`, `bun run test:e2e:smoke`를 개별 실행해 원인을 분리한다.
+3. 접근성 기본 체크(라벨, 키보드 포커스, 콘트라스트)를 수행한다.
+4. 보안 규칙: 비밀키는 서버 전용, 클라이언트 노출 금지.
 
 ## TDD Rules
 1. 기능 구현 전 실패하는 테스트(또는 명시적인 검증 시나리오)를 먼저 정의한다.

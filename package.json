@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test -g @smoke",
+    "verify": "bun run typecheck && bun run lint && bun run test:unit && bun run test:e2e:smoke"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
