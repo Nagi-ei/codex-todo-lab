@@ -261,3 +261,19 @@
 - RED: 실패 경로가 smoke suite에서 보장되지 않음
 - GREEN: wrong-password smoke 테스트 추가
 - REFACTOR: 가입/로그아웃/오입력 로그인 흐름을 재사용해 안정화
+
+## Slice 13
+- Goal: 학습용 모드에서 토스트에 서버 응답 원문과 응답코드를 함께 표시한다.
+- Done criteria:
+  - `AuthActionState`에 `response_status`가 포함된다.
+  - login/signup 토스트에 `app_code`, `response_status`, `server_response`가 표시된다.
+  - 에러 상태는 toast-only 정책을 유지한다.
+- Verification:
+  - `bun run lint`
+  - `bun run typecheck`
+  - `bun run test:e2e:smoke`
+
+## TDD Cycle (Slice 13)
+- RED: 학습용 디버깅 시 토스트에서 서버 응답 코드/원문을 바로 확인할 수 없음
+- GREEN: 액션에서 `response_status`를 채우고, 폼 토스트에 상세 정보 포맷을 추가
+- REFACTOR: 중복 토스트 키에 `response_status`를 포함해 재발행 노이즈를 줄임
