@@ -359,3 +359,17 @@
 - RED: 회원가입 폼은 여전히 기존 action-state 흐름이라 로그인 폼과 실행 모델이 불일치
 - GREEN: `SignupForm`을 `useMutation(signupMutationAction)` 기반으로 전환하고 성공 시 `router.push(result.next)` 적용
 - REFACTOR: 로그인 폼과 동일한 에러 토스트/디버그 로그 패턴으로 정렬
+
+## Slice 20
+- Goal: auth 실패 토스트 포맷 중복을 공통 유틸로 통합한다.
+- Done criteria:
+  - 로그인/회원가입 폼이 동일 포맷터를 사용한다.
+  - toast 중복 방지 키 생성 로직이 공통화된다.
+- Verification:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 20)
+- RED: login/signup 폼에 동일한 토스트 포맷/키 로직이 중복되어 변경 누락 위험이 있다
+- GREEN: `auth-error-toast.ts` 유틸을 추가하고 두 폼에서 공통 함수 사용으로 전환
+- REFACTOR: 폼 내부 중복 formatter 함수 제거

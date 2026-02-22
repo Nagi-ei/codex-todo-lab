@@ -6,7 +6,10 @@ import { useRef } from "react";
 import { toast } from "sonner";
 
 import { signupMutationAction } from "@/app/auth/actions";
-import type { AuthActionResult } from "@/app/auth/types";
+import {
+  buildAuthErrorToastKey,
+  formatLearningAuthErrorToast,
+} from "@/components/auth/auth-error-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -21,14 +24,14 @@ export function SignupForm() {
         return;
       }
 
-      const toastKey = `${result.code}:${result.response_status ?? "none"}:${result.message}`;
+      const toastKey = buildAuthErrorToastKey(result);
 
       if (latestToastKeyRef.current === toastKey) {
         return;
       }
 
       latestToastKeyRef.current = toastKey;
-      toast.error(formatLearningErrorToast(result));
+      toast.error(formatLearningAuthErrorToast(result));
 
       if (process.env.NODE_ENV !== "production") {
         console.debug("[auth][signup]", {
@@ -87,15 +90,4 @@ export function SignupForm() {
       </Button>
     </form>
   );
-}
-
-function formatLearningErrorToast(state: Extract<AuthActionResult, { ok: false }>) {
-  const responseStatusLabel =
-    state.response_status === null || state.response_status === undefined
-      ? "unknown"
-      : String(state.response_status);
-  const appCodeLabel = state.code ?? "unknown";
-  const debugReasonLabel = state.debug_reason ?? "n/a";
-
-  return `${state.message} | app_code: ${appCodeLabel} | response_status: ${responseStatusLabel} | server_response: ${debugReasonLabel}`;
 }
