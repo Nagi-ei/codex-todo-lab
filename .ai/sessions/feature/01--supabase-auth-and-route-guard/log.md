@@ -393,3 +393,27 @@
 - Cause: Supabase 프로젝트 설정에 따라 중복 가입 시 에러 토스트 대신 `/auth` 유지 또는 `/auth/check-email` 유도 등 응답 경로가 달라질 수 있음
 - Fix: duplicate-signup 검증을 \"안전 처리\" 관점(인증 화면 유지 또는 check-email 유도)으로 변경해 환경 의존성을 제거
 - Re-verify: `bun run test:e2e:smoke` 통과 (3 passed)
+
+## Slice 22 (Review + Refactor + Final Verify)
+- Goal: mutation 전환 후 잔여 호환 코드를 제거하고 최종 검증을 통과한다.
+- Done criteria:
+  - 더 이상 사용하지 않는 `loginActionState`/`signupActionState`가 제거된다.
+  - `AuthActionState`/`initialAuthActionState` 타입이 제거된다.
+  - 전체 검증 명령이 통과한다.
+- Verification:
+  - `bun run verify`
+
+## TDD Cycle (Slice 22)
+- RED: mutation 전환 이후에도 action-state 호환 래퍼/타입이 남아 구조가 혼재됨
+- GREEN: 결과 계약(`AuthActionResult`)만 남기고 구형 action-state 경로를 제거
+- REFACTOR: auth action/type 모듈을 mutation 실행 모델 기준으로 정리
+
+## Fix Log (Slice 22)
+- Issue: `bun run verify`에서 `vitest` 명령 미설치로 `test:unit` 단계 실패
+- Cause: `package.json` 스크립트에 `vitest`가 정의되어 있었지만 dev dependency 누락
+- Fix: `vitest` 설치 및 `vitest.config.ts` 추가 (`tests/unit/**/*.test.ts`, `passWithNoTests: true`)
+- Re-verify: `bun run verify` 재실행
+
+## Re-verify Result (Slice 22)
+- `bun run verify` 통과
+- 상세: `typecheck`, `lint`, `test:unit`, `test:e2e:smoke` 모두 green

@@ -25,15 +25,3 @@ export type AuthCredentials = {
   email: string;
   password: string;
 };
-
-export type AuthActionState = {
-  status: "idle" | "error";
-  code?: AuthErrorCode;
-  message?: string;
-  debug_reason?: string;
-  response_status?: number | null;
-};
-
-export const initialAuthActionState: AuthActionState = {
-  status: "idle",
-};

@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import type { AuthError } from "@supabase/supabase-js";
 
 import {
@@ -10,16 +9,8 @@ import {
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type {
   AuthActionResult,
-  AuthActionState,
   AuthCredentials,
 } from "@/app/auth/types";
-
-function readCredentials(formData: FormData): AuthCredentials {
-  return {
-    email: String(formData.get("email") ?? "").trim(),
-    password: String(formData.get("password") ?? ""),
-  };
-}
 
 function normalizeCredentials(input: AuthCredentials): AuthCredentials {
   return {
@@ -147,46 +138,6 @@ export async function signupMutationAction(
     ok: true,
     code: "ok",
     next: "/todos",
-  };
-}
-
-export async function loginActionState(
-  prevState: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const result = await loginMutationAction(readCredentials(formData));
-
-  if (result.ok) {
-    redirect(result.next);
-  }
-
-  return {
-    ...prevState,
-    status: "error",
-    code: result.code,
-    message: result.message,
-    debug_reason: result.debug_reason,
-    response_status: result.response_status,
-  };
-}
-
-export async function signupActionState(
-  prevState: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const result = await signupMutationAction(readCredentials(formData));
-
-  if (result.ok) {
-    redirect(result.next);
-  }
-
-  return {
-    ...prevState,
-    status: "error",
-    code: result.code,
-    message: result.message,
-    debug_reason: result.debug_reason,
-    response_status: result.response_status,
   };
 }
 
