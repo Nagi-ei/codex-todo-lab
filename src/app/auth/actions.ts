@@ -3,62 +3,71 @@
 import { redirect } from "next/navigation";
 import type { AuthError } from "@supabase/supabase-js";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   createSupabaseAdminClient,
   shouldAutoConfirmEmails,
 } from "@/lib/supabase/admin";
-import type { AuthActionState } from "@/app/auth/types";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type {
+  AuthActionResult,
+  AuthActionState,
+  AuthCredentials,
+} from "@/app/auth/types";
 
-function readCredentials(formData: FormData) {
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  return { email, password };
+function readCredentials(formData: FormData): AuthCredentials {
+  return {
+    email: String(formData.get("email") ?? "").trim(),
+    password: String(formData.get("password") ?? ""),
+  };
 }
 
-export async function loginActionState(
-  prevState: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const { email, password } = readCredentials(formData);
+function normalizeCredentials(input: AuthCredentials): AuthCredentials {
+  return {
+    email: String(input.email ?? "").trim(),
+    password: String(input.password ?? ""),
+  };
+}
+
+function toMissingCredentialsError(): AuthActionResult {
+  return {
+    ok: false,
+    code: "missing_credentials",
+    message: "이메일과 비밀번호를 모두 입력해 주세요.",
+    debug_reason: "missing_credentials",
+    response_status: null,
+  };
+}
+
+export async function loginMutationAction(
+  input: AuthCredentials,
+): Promise<AuthActionResult> {
+  const { email, password } = normalizeCredentials(input);
 
   if (!email || !password) {
-    return {
-      ...prevState,
-      status: "error",
-      code: "missing_credentials",
-      message: "이메일과 비밀번호를 모두 입력해 주세요.",
-      debug_reason: "missing_credentials",
-      response_status: null,
-    };
+    return toMissingCredentialsError();
   }
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return toLoginErrorState(prevState, error);
+    return toLoginErrorResult(error);
   }
 
-  redirect("/todos");
+  return {
+    ok: true,
+    code: "ok",
+    next: "/todos",
+  };
 }
 
-export async function signupActionState(
-  prevState: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const { email, password } = readCredentials(formData);
+export async function signupMutationAction(
+  input: AuthCredentials,
+): Promise<AuthActionResult> {
+  const { email, password } = normalizeCredentials(input);
 
   if (!email || !password) {
-    return {
-      ...prevState,
-      status: "error",
-      code: "missing_credentials",
-      message: "이메일과 비밀번호를 모두 입력해 주세요.",
-      debug_reason: "missing_credentials",
-      response_status: null,
-    };
+    return toMissingCredentialsError();
   }
 
   const supabase = await createSupabaseServerClient();
@@ -74,7 +83,7 @@ export async function signupActionState(
       });
 
       if (createUserError) {
-        return toSignupErrorState(prevState, createUserError, "admin_create");
+        return toSignupErrorResult(createUserError, "admin_create");
       }
 
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -83,17 +92,21 @@ export async function signupActionState(
       });
 
       if (signInError) {
-        return toLoginErrorState(prevState, signInError);
+        return toLoginErrorResult(signInError);
       }
 
-      redirect("/todos");
+      return {
+        ok: true,
+        code: "ok",
+        next: "/todos",
+      };
     }
   }
 
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    return toSignupErrorState(prevState, error, "public_signup");
+    return toSignupErrorResult(error, "public_signup");
   }
 
   if (!data.session) {
@@ -113,29 +126,77 @@ export async function signupActionState(
           });
 
           if (!signInError) {
-            redirect("/todos");
+            return {
+              ok: true,
+              code: "ok",
+              next: "/todos",
+            };
           }
         }
       }
     }
 
-    redirect("/auth/check-email");
+    return {
+      ok: true,
+      code: "ok",
+      next: "/auth/check-email",
+    };
   }
 
-  redirect("/todos");
+  return {
+    ok: true,
+    code: "ok",
+    next: "/todos",
+  };
 }
 
-function toLoginErrorState(
+export async function loginActionState(
   prevState: AuthActionState,
-  error: AuthError,
-): AuthActionState {
+  formData: FormData,
+): Promise<AuthActionState> {
+  const result = await loginMutationAction(readCredentials(formData));
+
+  if (result.ok) {
+    redirect(result.next);
+  }
+
+  return {
+    ...prevState,
+    status: "error",
+    code: result.code,
+    message: result.message,
+    debug_reason: result.debug_reason,
+    response_status: result.response_status,
+  };
+}
+
+export async function signupActionState(
+  prevState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const result = await signupMutationAction(readCredentials(formData));
+
+  if (result.ok) {
+    redirect(result.next);
+  }
+
+  return {
+    ...prevState,
+    status: "error",
+    code: result.code,
+    message: result.message,
+    debug_reason: result.debug_reason,
+    response_status: result.response_status,
+  };
+}
+
+function toLoginErrorResult(error: AuthError): AuthActionResult {
   const message = error.message.toLowerCase();
   const isEmailNotConfirmed = message.includes("email not confirmed");
 
   if (isEmailNotConfirmed) {
     return {
-      ...prevState,
-      status: "error",
+      ok: false,
       code: "email_not_confirmed",
       message: "이메일 확인 후 로그인해 주세요.",
       debug_reason: error.message,
@@ -144,8 +205,7 @@ function toLoginErrorState(
   }
 
   return {
-    ...prevState,
-    status: "error",
+    ok: false,
     code: "invalid_credentials",
     message: "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.",
     debug_reason: error.message,
@@ -153,17 +213,15 @@ function toLoginErrorState(
   };
 }
 
-function toSignupErrorState(
-  prevState: AuthActionState,
+function toSignupErrorResult(
   error: AuthError,
   source: "admin_create" | "public_signup",
-): AuthActionState {
+): AuthActionResult {
   const message = error.message.toLowerCase();
 
   if (message.includes("already registered") || message.includes("already exists")) {
     return {
-      ...prevState,
-      status: "error",
+      ok: false,
       code: "signup_failed",
       message: "이미 가입된 이메일입니다. 로그인해 주세요.",
       debug_reason: `${source}: ${error.message}`,
@@ -173,8 +231,7 @@ function toSignupErrorState(
 
   if (message.includes("rate limit")) {
     return {
-      ...prevState,
-      status: "error",
+      ok: false,
       code: "signup_failed",
       message: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
       debug_reason: `${source}: ${error.message}`,
@@ -183,8 +240,7 @@ function toSignupErrorState(
   }
 
   return {
-    ...prevState,
-    status: "error",
+    ok: false,
     code: "signup_failed",
     message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     debug_reason: `${source}: ${error.message}`,

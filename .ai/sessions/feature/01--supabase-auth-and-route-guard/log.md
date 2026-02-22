@@ -316,3 +316,16 @@
 - RED: query client/provider가 없어 mutation 기반 실행 모델을 적용할 수 없음
 - GREEN: `QueryProvider` 컴포넌트를 생성하고 `layout.tsx`에 연결
 - REFACTOR: mutation retry 기본값을 `false`로 고정해 auth mutation 실패 시나리오 디버깅 신호를 단순화
+
+## Slice 17
+- Goal: auth 서버 액션을 mutation-friendly 결과 계약으로 전환한다.
+- Done criteria:
+  - `AuthActionResult`/`AuthCredentials` 타입이 추가된다.
+  - login/signup 액션의 핵심 경로가 결과 객체를 반환한다.
+- Verification:
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 17)
+- RED: `redirect` 중심 액션 구조라 클라이언트 mutation 흐름에서 성공/실패 분기 처리가 어렵다
+- GREEN: `loginMutationAction`/`signupMutationAction` 도입, 성공/실패를 `AuthActionResult`로 반환
+- REFACTOR: 기존 폼 호환을 위해 `loginActionState`/`signupActionState` 래퍼를 임시 유지
