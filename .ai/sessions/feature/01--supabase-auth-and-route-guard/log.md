@@ -344,3 +344,18 @@
 - RED: 로그인 폼이 server action form-state 패턴에 묶여 있어 mutation 상태 제어가 어렵다
 - GREEN: `LoginForm`을 `useMutation(loginMutationAction)` 기반으로 전환하고 성공 시 `router.push(result.next)` 처리
 - REFACTOR: 토스트 중복 방지 키를 mutation 결과 코드/상태 기반으로 유지
+
+## Slice 19
+- Goal: 회원가입 폼 실행을 `useMutation` 기반으로 전환한다.
+- Done criteria:
+  - `SignupForm`에서 `useActionState` 의존이 제거된다.
+  - 성공 시 `next` 경로 분기를 클라이언트에서 수행한다.
+  - 실패 시 toast-only 에러 정책을 유지한다.
+- Verification:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 19)
+- RED: 회원가입 폼은 여전히 기존 action-state 흐름이라 로그인 폼과 실행 모델이 불일치
+- GREEN: `SignupForm`을 `useMutation(signupMutationAction)` 기반으로 전환하고 성공 시 `router.push(result.next)` 적용
+- REFACTOR: 로그인 폼과 동일한 에러 토스트/디버그 로그 패턴으로 정렬

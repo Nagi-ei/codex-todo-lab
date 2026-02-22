@@ -1,45 +1,56 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "sonner";
 
-import { signupActionState } from "@/app/auth/actions";
-import { initialAuthActionState } from "@/app/auth/types";
+import { signupMutationAction } from "@/app/auth/actions";
+import type { AuthActionResult } from "@/app/auth/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function SignupForm() {
-  const [state, formAction, isPending] = useActionState(
-    signupActionState,
-    initialAuthActionState,
-  );
+  const router = useRouter();
   const latestToastKeyRef = useRef<string | null>(null);
+  const mutation = useMutation({
+    mutationFn: signupMutationAction,
+    onSuccess: (result) => {
+      if (result.ok) {
+        router.push(result.next);
+        return;
+      }
 
-  useEffect(() => {
-    if (state.status !== "error" || !state.message) {
-      return;
-    }
+      const toastKey = `${result.code}:${result.response_status ?? "none"}:${result.message}`;
 
-    const toastKey = `${state.code ?? "unknown"}:${state.response_status ?? "none"}:${state.message}`;
+      if (latestToastKeyRef.current === toastKey) {
+        return;
+      }
 
-    if (latestToastKeyRef.current === toastKey) {
-      return;
-    }
+      latestToastKeyRef.current = toastKey;
+      toast.error(formatLearningErrorToast(result));
 
-    latestToastKeyRef.current = toastKey;
-    toast.error(formatLearningErrorToast(state));
+      if (process.env.NODE_ENV !== "production") {
+        console.debug("[auth][signup]", {
+          code: result.code,
+          debug_reason: result.debug_reason,
+        });
+      }
+    },
+  });
 
-    if (process.env.NODE_ENV !== "production") {
-      console.debug("[auth][signup]", {
-        code: state.code,
-        debug_reason: state.debug_reason,
-      });
-    }
-  }, [state]);
+  async function handleSubmit(formData: FormData) {
+    await mutation.mutateAsync({
+      email: String(formData.get("email") ?? "").trim(),
+      password: String(formData.get("password") ?? ""),
+    });
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form
+      action={handleSubmit}
+      className="space-y-4"
+    >
       <div className="space-y-2">
         <label className="text-sm font-medium" htmlFor="signup-email">
           이메일
@@ -66,19 +77,19 @@ export function SignupForm() {
         />
       </div>
 
-      <Button className="w-full" disabled={isPending} type="submit" variant="secondary">
-        {isPending ? "가입 처리 중..." : "회원가입"}
+      <Button
+        className="w-full"
+        disabled={mutation.isPending}
+        type="submit"
+        variant="secondary"
+      >
+        {mutation.isPending ? "가입 처리 중..." : "회원가입"}
       </Button>
     </form>
   );
 }
 
-function formatLearningErrorToast(state: {
-  message?: string;
-  code?: string;
-  response_status?: number | null;
-  debug_reason?: string;
-}) {
+function formatLearningErrorToast(state: Extract<AuthActionResult, { ok: false }>) {
   const responseStatusLabel =
     state.response_status === null || state.response_status === undefined
       ? "unknown"
