@@ -277,3 +277,42 @@
 - RED: 학습용 디버깅 시 토스트에서 서버 응답 코드/원문을 바로 확인할 수 없음
 - GREEN: 액션에서 `response_status`를 채우고, 폼 토스트에 상세 정보 포맷을 추가
 - REFACTOR: 중복 토스트 키에 `response_status`를 포함해 재발행 노이즈를 줄임
+
+## TDD Cycle 14 (Global Skill Suite v2)
+- RED: 브랜치 진행에 계획/실행/하드닝/리뷰/리팩토링+최종검증을 강제하는 전역 오케스트레이션 체계가 부재
+- GREEN: 전역 스킬 `branch-orchestrator`, `branch-planner`, `branch-execution-gate`, `hardening-gate`, `refactor-pass`를 생성하고 기존 `branch-slice-execution-gate`를 deprecated alias로 개편
+- REFACTOR: 검증 명령 선택 규칙을 lockfile 기반(project-aware)으로 통일
+
+## Skill Validation (Global Skill Suite v2)
+- Hardening skip check: 오케스트레이터에 단계 순서와 hard-stop 조건 명시
+- Review-before-refactor check: Stage Contract를 고정해 순서 위반 차단
+- Final verify check: `refactor-pass`에 최종 검증 mandatory 조건 명시
+- Package manager detection: bun/pnpm/npm/yarn lockfile 기반 명령 선택 규칙 반영
+
+## used_skills (Cycle 14)
+- `skill-creator`
+- `branch-slice-execution-gate`
+
+## TDD Cycle 15 (Skill Wiring Refinement)
+- RED: `tdd-thread-flow`가 실행 단계에만 암묵적으로 존재해 planner/execution/orchestrator 간 SSOT 연결이 문서상 불충분
+- GREEN: `branch-planner`, `branch-execution-gate`, `branch-orchestrator`에 `tdd-thread-flow`를 SSOT로 참조하고 단계별 강제 조건 추가
+- REFACTOR: 오케스트레이터 hard-stop에 planner TDD 필드 누락/실행 로그 TDD 증거 누락 차단 규칙 반영
+
+## used_skills (Cycle 15)
+- `branch-planner`
+- `branch-execution-gate`
+- `tdd-thread-flow`
+
+## Slice 16
+- Goal: TanStack Query provider를 앱 루트에 도입한다.
+- Done criteria:
+  - `@tanstack/react-query`가 설치된다.
+  - 루트 레이아웃에 `QueryClientProvider`가 연결된다.
+- Verification:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 16)
+- RED: query client/provider가 없어 mutation 기반 실행 모델을 적용할 수 없음
+- GREEN: `QueryProvider` 컴포넌트를 생성하고 `layout.tsx`에 연결
+- REFACTOR: mutation retry 기본값을 `false`로 고정해 auth mutation 실패 시나리오 디버깅 신호를 단순화
