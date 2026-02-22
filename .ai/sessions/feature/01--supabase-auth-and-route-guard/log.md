@@ -329,3 +329,18 @@
 - RED: `redirect` 중심 액션 구조라 클라이언트 mutation 흐름에서 성공/실패 분기 처리가 어렵다
 - GREEN: `loginMutationAction`/`signupMutationAction` 도입, 성공/실패를 `AuthActionResult`로 반환
 - REFACTOR: 기존 폼 호환을 위해 `loginActionState`/`signupActionState` 래퍼를 임시 유지
+
+## Slice 18
+- Goal: 로그인 폼 실행을 `useMutation` 기반으로 전환한다.
+- Done criteria:
+  - `useActionState` 의존이 제거된다.
+  - 성공 시 `next` 경로로 이동한다.
+  - 실패 시 toast 에러를 유지한다.
+- Verification:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 18)
+- RED: 로그인 폼이 server action form-state 패턴에 묶여 있어 mutation 상태 제어가 어렵다
+- GREEN: `LoginForm`을 `useMutation(loginMutationAction)` 기반으로 전환하고 성공 시 `router.push(result.next)` 처리
+- REFACTOR: 토스트 중복 방지 키를 mutation 결과 코드/상태 기반으로 유지
