@@ -20,14 +20,14 @@ export function LoginForm() {
       return;
     }
 
-    const toastKey = `${state.code ?? "unknown"}:${state.message}`;
+    const toastKey = `${state.code ?? "unknown"}:${state.response_status ?? "none"}:${state.message}`;
 
     if (latestToastKeyRef.current === toastKey) {
       return;
     }
 
     latestToastKeyRef.current = toastKey;
-    toast.error(state.message);
+    toast.error(formatLearningErrorToast(state));
 
     if (process.env.NODE_ENV !== "production") {
       console.debug("[auth][login]", {
@@ -70,4 +70,20 @@ export function LoginForm() {
       </Button>
     </form>
   );
+}
+
+function formatLearningErrorToast(state: {
+  message?: string;
+  code?: string;
+  response_status?: number | null;
+  debug_reason?: string;
+}) {
+  const responseStatusLabel =
+    state.response_status === null || state.response_status === undefined
+      ? "unknown"
+      : String(state.response_status);
+  const appCodeLabel = state.code ?? "unknown";
+  const debugReasonLabel = state.debug_reason ?? "n/a";
+
+  return `${state.message} | app_code: ${appCodeLabel} | response_status: ${responseStatusLabel} | server_response: ${debugReasonLabel}`;
 }

@@ -10,6 +10,7 @@ export type AuthActionState = {
   code?: AuthErrorCode;
   message?: string;
   debug_reason?: string;
+  response_status?: number | null;
 };
 
 export const initialAuthActionState: AuthActionState = {

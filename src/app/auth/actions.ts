@@ -30,6 +30,7 @@ export async function loginActionState(
       code: "missing_credentials",
       message: "이메일과 비밀번호를 모두 입력해 주세요.",
       debug_reason: "missing_credentials",
+      response_status: null,
     };
   }
 
@@ -56,6 +57,7 @@ export async function signupActionState(
       code: "missing_credentials",
       message: "이메일과 비밀번호를 모두 입력해 주세요.",
       debug_reason: "missing_credentials",
+      response_status: null,
     };
   }
 
@@ -137,6 +139,7 @@ function toLoginErrorState(
       code: "email_not_confirmed",
       message: "이메일 확인 후 로그인해 주세요.",
       debug_reason: error.message,
+      response_status: getResponseStatus(error),
     };
   }
 
@@ -146,6 +149,7 @@ function toLoginErrorState(
     code: "invalid_credentials",
     message: "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.",
     debug_reason: error.message,
+    response_status: getResponseStatus(error),
   };
 }
 
@@ -163,6 +167,7 @@ function toSignupErrorState(
       code: "signup_failed",
       message: "이미 가입된 이메일입니다. 로그인해 주세요.",
       debug_reason: `${source}: ${error.message}`,
+      response_status: getResponseStatus(error),
     };
   }
 
@@ -173,6 +178,7 @@ function toSignupErrorState(
       code: "signup_failed",
       message: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
       debug_reason: `${source}: ${error.message}`,
+      response_status: getResponseStatus(error),
     };
   }
 
@@ -182,5 +188,14 @@ function toSignupErrorState(
     code: "signup_failed",
     message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     debug_reason: `${source}: ${error.message}`,
+    response_status: getResponseStatus(error),
   };
+}
+
+function getResponseStatus(error: AuthError): number | null {
+  if ("status" in error && typeof error.status === "number") {
+    return error.status;
+  }
+
+  return null;
 }
