@@ -417,3 +417,15 @@
 ## Re-verify Result (Slice 22)
 - `bun run verify` 통과
 - 상세: `typecheck`, `lint`, `test:unit`, `test:e2e:smoke` 모두 green
+
+## Slice 23
+- Goal: E2E 실행 산출물 디렉터리를 git 추적에서 제외해 워크트리 노이즈를 줄인다.
+- Done criteria:
+  - `.gitignore`에 `/test-results`가 추가된다.
+- Verification:
+  - `git status --short`
+
+## TDD Cycle (Slice 23)
+- RED: `test-results/`가 untracked로 반복 노출되어 슬라이스 단위 변경 확인 시 잡음 발생
+- GREEN: `.gitignore`에 `/test-results` 추가
+- REFACTOR: 없음
