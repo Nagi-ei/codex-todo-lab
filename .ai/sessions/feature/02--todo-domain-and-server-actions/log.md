@@ -344,3 +344,43 @@
 
 ## Verification Result (Slice 11)
 - RLS enable + CRUD 정책 패턴 검출 통과
+
+## Slice 12 (Apply/Validation Notes)
+- Goal: migration 적용 경로와 검증/롤백 메모를 문서화
+- Verify:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 12)
+- RED: Supabase 적용 절차가 레포에 없어 재현/인수인계가 어려움
+- GREEN: `supabase/README.md`에 적용/검증/롤백 절차 문서화
+- REFACTOR: 체크 순서를 SQL 실행 -> 검증 -> 롤백 경고 순으로 정리
+
+## Verification Result (Slice 12)
+- `bun run typecheck` => pass
+- `bun run lint` => pass
+
+## Hardening (Migration Cycle)
+- Failure path tested:
+  - todos 테이블 미존재 상태에서 앱 에러 payload 확인(`db_insert_failed`)
+- Observability signals checked:
+  - `providerMessage`가 테이블 미존재 원인을 직접 제공
+- UX resilience checked:
+  - 앱은 실패를 토스트 + debug label로 노출
+
+## Review (Migration Cycle)
+- Findings:
+  - P0/P1 없음
+- Security checks:
+  - user-owned RLS 정책 CRUD 4종, update `using + with check` 적용
+
+## Refactor Pass (Migration Cycle)
+- Refactor changes:
+  - migration SQL 정책명/인덱스명 규칙 통일
+  - runbook 문서 경로를 `supabase/README.md`로 고정
+
+## Final Verify (Migration Cycle)
+- 1차 `bun run verify` 실패: `.next/dev/lock`
+- FIX: 잔존 `next dev` 프로세스 종료
+- 2차 `bun run verify` 통과:
+  - typecheck/lint/test:unit/test:e2e:smoke pass
