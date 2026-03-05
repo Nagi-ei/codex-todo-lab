@@ -59,3 +59,18 @@
 - Cause: git 명령 병렬 실행으로 순서 보장 실패
 - Fix: 브랜치 재생성(`main` 체크아웃 후 순차 생성)
 - Re-verify: 현재 브랜치 재확인
+
+## Slice 1
+- Goal: Todo 도메인 타입/스키마를 테스트 기반으로 고정
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 1)
+- RED: `tests/unit/todos/schema.test.ts` 추가 후 `Cannot find module '../../../src/app/todos/schema'`로 실패
+- GREEN: `src/app/todos/types.ts`, `src/app/todos/schema.ts` 생성 + `zod` 추가로 테스트 통과
+- REFACTOR: update payload 검증을 `updateTodoSchema.refine`으로 명시화하고 재검증 통과
+
+## Verification Result (Slice 1)
+- `bun run test:unit` => 1 file, 6 tests passed
+- `bun run typecheck` => passed
