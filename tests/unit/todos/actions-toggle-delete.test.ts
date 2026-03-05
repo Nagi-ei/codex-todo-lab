@@ -97,11 +97,12 @@ describe("todo toggle/delete actions", () => {
 
     const result = await toggleTodoAction("todo-1");
 
-    expect(result).toEqual({
-      ok: false,
-      code: "unauthorized",
-      message: "로그인이 필요합니다.",
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("unauthorized");
+      expect(result.response.transportStatus).toBe(200);
+      expect(typeof result.response.requestId).toBe("string");
+    }
   });
 
   it("returns not_found when toggle target is missing", async () => {
@@ -110,11 +111,11 @@ describe("todo toggle/delete actions", () => {
 
     const result = await toggleTodoAction("missing-id");
 
-    expect(result).toEqual({
-      ok: false,
-      code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("not_found");
+      expect(result.response.details?.reason).toBe("todo_not_found");
+    }
   });
 
   it("toggles completion status", async () => {
@@ -142,11 +143,11 @@ describe("todo toggle/delete actions", () => {
 
     const result = await deleteTodoAction("missing-id");
 
-    expect(result).toEqual({
-      ok: false,
-      code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("not_found");
+      expect(result.response.details?.reason).toBe("todo_not_found");
+    }
   });
 
   it("deletes todo", async () => {

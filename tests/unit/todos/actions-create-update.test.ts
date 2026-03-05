@@ -95,6 +95,9 @@ describe("todo create/update actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("validation_failed");
+      expect(result.response.transportStatus).toBe(200);
+      expect(typeof result.response.requestId).toBe("string");
+      expect(result.response.details?.fieldErrors?.title?.[0]).toBeTruthy();
     }
   });
 
@@ -104,11 +107,13 @@ describe("todo create/update actions", () => {
 
     const result = await createTodoAction({ title: "Write tests" });
 
-    expect(result).toEqual({
-      ok: false,
-      code: "unauthorized",
-      message: "로그인이 필요합니다.",
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("unauthorized");
+      expect(result.response.transportStatus).toBe(200);
+      expect(typeof result.response.requestId).toBe("string");
+      expect(result.response.details?.reason).toBe("missing_user");
+    }
   });
 
   it("creates todo with trimmed title", async () => {
@@ -128,17 +133,32 @@ describe("todo create/update actions", () => {
     }
   });
 
+  it("returns db_insert_failed when insert does not return row", async () => {
+    const supabase = createSupabaseMock({ createRow: null });
+    mockCreateSupabaseServerClient.mockResolvedValue(supabase);
+
+    const result = await createTodoAction({ title: "Write tests" });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("db_insert_failed");
+      expect(result.response.details?.reason).toBe("todos_insert_failed");
+    }
+  });
+
   it("returns not_found when update target does not exist", async () => {
     const supabase = createSupabaseMock({ updateRow: null });
     mockCreateSupabaseServerClient.mockResolvedValue(supabase);
 
     const result = await updateTodoAction("missing-id", { title: "x" });
 
-    expect(result).toEqual({
-      ok: false,
-      code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
-    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("not_found");
+      expect(result.response.transportStatus).toBe(200);
+      expect(typeof result.response.requestId).toBe("string");
+      expect(result.response.details?.reason).toBe("todo_not_found");
+    }
   });
 
   it("updates todo title", async () => {

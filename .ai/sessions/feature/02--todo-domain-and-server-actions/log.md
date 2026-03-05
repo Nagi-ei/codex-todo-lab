@@ -199,3 +199,24 @@
   - `bun run verify`
 - Final verify result:
   - passed
+
+## Slice 7 (Debug Payload Hardening)
+- Goal: Server Action 200 응답 유지하면서 실패 payload 추적성(code/message/response) 강화
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 7)
+- RED: 기존 실패 payload가 `code/message`만 제공되어 request 단위 추적 정보가 부족함
+- GREEN: Todo 액션 실패 응답에 `response.transportStatus(200)`, `response.requestId`, `response.details`를 추가하고 코드 세분화(`db_read/insert/update/delete_failed`)
+- REFACTOR: `presentation`에 debug label(`code · requestId`) 추가, 클라이언트 토스트/콘솔 출력을 공통 형식으로 정리
+
+## Verification Result (Slice 7)
+- `bun run test:unit` => 5 files, 23 tests passed
+- `bun run typecheck` => passed
+- `bun run lint` => passed
+
+## Notes (Slice 7)
+- 네트워크 응답은 200을 유지하되 payload 기준으로 실패 추적 가능
+- 실패 시 확인 포인트: `ok=false`, `code`, `response.requestId`, `response.details.reason/providerMessage`

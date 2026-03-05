@@ -6,7 +6,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { updateTodoAction } from "@/app/todos/actions";
-import { getTodoActionErrorMessage } from "@/app/todos/presentation";
+import {
+  getTodoActionDebugLabel,
+  getTodoActionErrorMessage,
+} from "@/app/todos/presentation";
 import type { Todo } from "@/app/todos/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,8 +38,12 @@ export function TodoEditDialog({ todo }: TodoEditDialogProps) {
     onSuccess: (result) => {
       if (!result.ok) {
         const message = getTodoActionErrorMessage(result);
+        const debugLabel = getTodoActionDebugLabel(result);
         setErrorMessage(message);
-        toast.error(message);
+        toast.error(`${message} (${debugLabel})`);
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[todo][update]", result);
+        }
         return;
       }
 

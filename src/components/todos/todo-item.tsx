@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { deleteTodoAction, toggleTodoAction } from "@/app/todos/actions";
-import { getTodoActionErrorMessage } from "@/app/todos/presentation";
+import {
+  getTodoActionDebugLabel,
+  getTodoActionErrorMessage,
+} from "@/app/todos/presentation";
 import type { Todo } from "@/app/todos/types";
 import { TodoEditDialog } from "@/components/todos/todo-edit-dialog";
 import { Button } from "@/components/ui/button";
@@ -22,7 +25,12 @@ export function TodoItem({ todo }: TodoItemProps) {
     mutationFn: () => toggleTodoAction(todo.id),
     onSuccess: (result) => {
       if (!result.ok) {
-        toast.error(getTodoActionErrorMessage(result));
+        toast.error(
+          `${getTodoActionErrorMessage(result)} (${getTodoActionDebugLabel(result)})`,
+        );
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[todo][toggle]", result);
+        }
         return;
       }
 
@@ -34,7 +42,12 @@ export function TodoItem({ todo }: TodoItemProps) {
     mutationFn: () => deleteTodoAction(todo.id),
     onSuccess: (result) => {
       if (!result.ok) {
-        toast.error(getTodoActionErrorMessage(result));
+        toast.error(
+          `${getTodoActionErrorMessage(result)} (${getTodoActionDebugLabel(result)})`,
+        );
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[todo][delete]", result);
+        }
         return;
       }
 

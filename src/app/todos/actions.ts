@@ -4,7 +4,11 @@ import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import type { TodoActionResult } from "./action-types";
+import type {
+  TodoActionErrorCode,
+  TodoActionErrorDetails,
+  TodoActionResult,
+} from "./action-types";
 import { createTodoSchema, updateTodoSchema } from "./schema";
 import type { CreateTodoInput, Todo, UpdateTodoInput } from "./types";
 
@@ -17,9 +21,9 @@ type TodoRow = {
   updated_at: string;
 };
 
-type TodoActionFieldErrors = {
-  title?: string[];
-};
+function createRequestId(): string {
+  return `todo_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
 
 function mapTodo(row: TodoRow): Todo {
   return {
@@ -32,36 +36,21 @@ function mapTodo(row: TodoRow): Todo {
   };
 }
 
-function toUnauthorizedResult(): TodoActionResult {
+function toErrorResult(input: {
+  code: TodoActionErrorCode;
+  message: string;
+  requestId: string;
+  details?: TodoActionErrorDetails;
+}): TodoActionResult {
   return {
     ok: false,
-    code: "unauthorized",
-    message: "로그인이 필요합니다.",
-  };
-}
-
-function toUnknownResult(): TodoActionResult {
-  return {
-    ok: false,
-    code: "unknown",
-    message: "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
-  };
-}
-
-function toNotFoundResult(): TodoActionResult {
-  return {
-    ok: false,
-    code: "not_found",
-    message: "할 일을 찾을 수 없습니다.",
-  };
-}
-
-function toValidationResult(fieldErrors: TodoActionFieldErrors): TodoActionResult {
-  return {
-    ok: false,
-    code: "validation_failed",
-    message: "입력값을 확인해 주세요.",
-    fieldErrors,
+    code: input.code,
+    message: input.message,
+    response: {
+      transportStatus: 200,
+      requestId: input.requestId,
+      details: input.details,
+    },
   };
 }
 
@@ -83,16 +72,32 @@ async function getActionContext(): Promise<{
 export async function createTodoAction(
   input: CreateTodoInput,
 ): Promise<TodoActionResult> {
+  const requestId = createRequestId();
   const parsed = createTodoSchema.safeParse(input);
 
   if (!parsed.success) {
-    return toValidationResult(parsed.error.flatten().fieldErrors);
+    return toErrorResult({
+      code: "validation_failed",
+      message: "입력값을 확인해 주세요.",
+      requestId,
+      details: {
+        reason: "schema_validation_failed",
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      },
+    });
   }
 
   const { supabase, userId } = await getActionContext();
 
   if (!userId) {
-    return toUnauthorizedResult();
+    return toErrorResult({
+      code: "unauthorized",
+      message: "로그인이 필요합니다.",
+      requestId,
+      details: {
+        reason: "missing_user",
+      },
+    });
   }
 
   const { data, error } = await supabase
@@ -105,7 +110,15 @@ export async function createTodoAction(
     .single<TodoRow>();
 
   if (error || !data) {
-    return toUnknownResult();
+    return toErrorResult({
+      code: "db_insert_failed",
+      message: "할 일을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      requestId,
+      details: {
+        reason: "todos_insert_failed",
+        providerMessage: error?.message,
+      },
+    });
   }
 
   return {
@@ -118,16 +131,32 @@ export async function updateTodoAction(
   id: string,
   input: UpdateTodoInput,
 ): Promise<TodoActionResult> {
+  const requestId = createRequestId();
   const parsed = updateTodoSchema.safeParse(input);
 
   if (!parsed.success) {
-    return toValidationResult(parsed.error.flatten().fieldErrors);
+    return toErrorResult({
+      code: "validation_failed",
+      message: "입력값을 확인해 주세요.",
+      requestId,
+      details: {
+        reason: "schema_validation_failed",
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      },
+    });
   }
 
   const { supabase, userId } = await getActionContext();
 
   if (!userId) {
-    return toUnauthorizedResult();
+    return toErrorResult({
+      code: "unauthorized",
+      message: "로그인이 필요합니다.",
+      requestId,
+      details: {
+        reason: "missing_user",
+      },
+    });
   }
 
   const payload: { title?: string; updated_at: string } = {
@@ -147,11 +176,26 @@ export async function updateTodoAction(
     .maybeSingle<TodoRow>();
 
   if (error) {
-    return toUnknownResult();
+    return toErrorResult({
+      code: "db_update_failed",
+      message: "할 일을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      requestId,
+      details: {
+        reason: "todos_update_failed",
+        providerMessage: error.message,
+      },
+    });
   }
 
   if (!data) {
-    return toNotFoundResult();
+    return toErrorResult({
+      code: "not_found",
+      message: "할 일을 찾을 수 없습니다.",
+      requestId,
+      details: {
+        reason: "todo_not_found",
+      },
+    });
   }
 
   return {
@@ -161,10 +205,18 @@ export async function updateTodoAction(
 }
 
 export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
+  const requestId = createRequestId();
   const { supabase, userId } = await getActionContext();
 
   if (!userId) {
-    return toUnauthorizedResult();
+    return toErrorResult({
+      code: "unauthorized",
+      message: "로그인이 필요합니다.",
+      requestId,
+      details: {
+        reason: "missing_user",
+      },
+    });
   }
 
   const { data: currentTodo, error: readError } = await supabase
@@ -175,11 +227,26 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
     .maybeSingle<TodoRow>();
 
   if (readError) {
-    return toUnknownResult();
+    return toErrorResult({
+      code: "db_read_failed",
+      message: "할 일을 조회하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      requestId,
+      details: {
+        reason: "todo_read_before_toggle_failed",
+        providerMessage: readError.message,
+      },
+    });
   }
 
   if (!currentTodo) {
-    return toNotFoundResult();
+    return toErrorResult({
+      code: "not_found",
+      message: "할 일을 찾을 수 없습니다.",
+      requestId,
+      details: {
+        reason: "todo_not_found",
+      },
+    });
   }
 
   const { data, error } = await supabase
@@ -194,7 +261,15 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
     .single<TodoRow>();
 
   if (error || !data) {
-    return toUnknownResult();
+    return toErrorResult({
+      code: "db_update_failed",
+      message: "완료 상태를 변경하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      requestId,
+      details: {
+        reason: "todo_toggle_update_failed",
+        providerMessage: error?.message,
+      },
+    });
   }
 
   return {
@@ -204,10 +279,18 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
 }
 
 export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
+  const requestId = createRequestId();
   const { supabase, userId } = await getActionContext();
 
   if (!userId) {
-    return toUnauthorizedResult();
+    return toErrorResult({
+      code: "unauthorized",
+      message: "로그인이 필요합니다.",
+      requestId,
+      details: {
+        reason: "missing_user",
+      },
+    });
   }
 
   const { data, error } = await supabase
@@ -219,11 +302,26 @@ export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
     .maybeSingle<TodoRow>();
 
   if (error) {
-    return toUnknownResult();
+    return toErrorResult({
+      code: "db_delete_failed",
+      message: "할 일을 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      requestId,
+      details: {
+        reason: "todo_delete_failed",
+        providerMessage: error.message,
+      },
+    });
   }
 
   if (!data) {
-    return toNotFoundResult();
+    return toErrorResult({
+      code: "not_found",
+      message: "할 일을 찾을 수 없습니다.",
+      requestId,
+      details: {
+        reason: "todo_not_found",
+      },
+    });
   }
 
   return {

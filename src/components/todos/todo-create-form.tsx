@@ -6,7 +6,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { createTodoAction } from "@/app/todos/actions";
-import { getTodoActionErrorMessage } from "@/app/todos/presentation";
+import {
+  getTodoActionDebugLabel,
+  getTodoActionErrorMessage,
+} from "@/app/todos/presentation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -20,8 +23,12 @@ export function TodoCreateForm() {
     onSuccess: (result) => {
       if (!result.ok) {
         const message = getTodoActionErrorMessage(result);
+        const debugLabel = getTodoActionDebugLabel(result);
         setErrorMessage(message);
-        toast.error(message);
+        toast.error(`${message} (${debugLabel})`);
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[todo][create]", result);
+        }
         return;
       }
 
