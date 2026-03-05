@@ -1,4 +1,5 @@
 import type { TodoFilter, Todo } from "@/app/todos/types";
+import { TodoItem } from "@/components/todos/todo-item";
 
 type TodoListProps = {
   todos: Todo[];
@@ -27,18 +28,9 @@ export function TodoList({ todos, activeFilter }: TodoListProps) {
   }
 
   return (
-    <ul className="space-y-2" aria-live="polite">
+    <ul aria-live="polite" className="space-y-2">
       {todos.map((todo) => (
-        <li key={todo.id} className="flex items-center justify-between rounded-md border p-3">
-          <span className={todo.isCompleted ? "text-muted-foreground line-through" : ""}>
-            {todo.title}
-          </span>
-          <span
-            className={todo.isCompleted ? "text-xs text-emerald-600" : "text-xs text-amber-600"}
-          >
-            {todo.isCompleted ? "완료" : "진행중"}
-          </span>
-        </li>
+        <TodoItem key={todo.id} todo={todo} />
       ))}
     </ul>
   );

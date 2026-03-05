@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { logoutAction } from "@/app/todos/actions";
 import { parseTodoFilter } from "@/app/todos/filter";
 import type { Todo, TodoFilter } from "@/app/todos/types";
+import { TodoCreateForm } from "@/components/todos/todo-create-form";
 import { TodoFilterTabs } from "@/components/todos/todo-filter-tabs";
 import { TodoList } from "@/components/todos/todo-list";
 import { Button } from "@/components/ui/button";
@@ -91,6 +92,7 @@ export default async function TodosPage({ searchParams }: TodosPageProps) {
           </p>
         </header>
 
+        <TodoCreateForm />
         <TodoFilterTabs activeFilter={activeFilter} />
         <TodoList activeFilter={activeFilter} todos={todos} />
 

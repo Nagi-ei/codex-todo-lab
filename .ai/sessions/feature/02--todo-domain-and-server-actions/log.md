@@ -127,3 +127,20 @@
 - `bun run test:unit` => 4 files, 19 tests passed
 - `bun run lint` => passed
 - `bun run typecheck` => passed
+
+## Slice 5
+- Goal: CRUD UI와 server actions 연결
+- Verify:
+  - `bun run test:unit`
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 5)
+- RED: `tests/unit/todos/presentation.test.ts` 추가 후 에러 메시지 유틸 부재로 실패
+- GREEN: `TodoCreateForm`, `TodoEditDialog`, `TodoItem` 추가 및 `/todos` 페이지에 CRUD UI 연결
+- REFACTOR: 액션 실패 메시지 추출을 `getTodoActionErrorMessage`로 공통화
+
+## Verification Result (Slice 5)
+- `bun run test:unit` => 5 files, 21 tests passed
+- `bun run lint` => passed
+- `bun run typecheck` => passed
