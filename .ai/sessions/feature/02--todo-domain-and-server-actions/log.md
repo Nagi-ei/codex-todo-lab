@@ -318,3 +318,16 @@
 
 ## Verification Result (Slice 9)
 - `test -f ...` => migration scaffold OK
+
+## Slice 10 (Todos Table Schema)
+- Goal: `public.todos` 테이블 스키마/제약/인덱스 정의
+- Verify:
+  - `rg -n "create table if not exists public.todos|user_id uuid not null references auth.users|char_length(title) between 1 and 200|idx_todos_user_created_at_desc" supabase/migrations/20260306022000_create_todos.sql`
+
+## TDD Cycle (Slice 10)
+- RED: todos 테이블 DDL 부재로 앱 insert 실패(`providerMessage: table not found`)
+- GREEN: 테이블 컬럼/제약/FK/기본값 추가
+- REFACTOR: 조회 경로 인덱스(`user_id`, `user_id+created_at desc`) 추가
+
+## Verification Result (Slice 10)
+- DDL/제약/인덱스 패턴 검출 통과
