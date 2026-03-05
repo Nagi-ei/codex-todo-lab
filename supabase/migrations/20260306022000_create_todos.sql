@@ -13,3 +13,26 @@ create table if not exists public.todos (
 
 create index if not exists idx_todos_user_id on public.todos (user_id);
 create index if not exists idx_todos_user_created_at_desc on public.todos (user_id, created_at desc);
+
+alter table public.todos enable row level security;
+
+create policy "todos_select_own"
+on public.todos
+for select
+using (auth.uid() = user_id);
+
+create policy "todos_insert_own"
+on public.todos
+for insert
+with check (auth.uid() = user_id);
+
+create policy "todos_update_own"
+on public.todos
+for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "todos_delete_own"
+on public.todos
+for delete
+using (auth.uid() = user_id);

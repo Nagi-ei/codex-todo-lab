@@ -331,3 +331,16 @@
 
 ## Verification Result (Slice 10)
 - DDL/제약/인덱스 패턴 검출 통과
+
+## Slice 11 (Todos RLS Policies)
+- Goal: todos 테이블 사용자 소유 CRUD RLS 정책 적용
+- Verify:
+  - `rg -n "enable row level security|todos_select_own|todos_insert_own|todos_update_own|todos_delete_own|with check (auth.uid\(\) = user_id)" supabase/migrations/20260306022000_create_todos.sql`
+
+## TDD Cycle (Slice 11)
+- RED: 정책 부재 시 사용자 격리 보장 불가
+- GREEN: select/insert/update/delete 정책 4종 추가
+- REFACTOR: 정책명 규칙 통일(`todos_*_own`) 및 update `using + with check` 동시 적용
+
+## Verification Result (Slice 11)
+- RLS enable + CRUD 정책 패턴 검출 통과
