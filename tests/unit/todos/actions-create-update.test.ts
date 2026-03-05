@@ -49,7 +49,7 @@ function createSupabaseMock(options?: {
   const createInsert = vi.fn().mockReturnValue({ select: createSelect });
 
   const updateSingle = vi.fn().mockResolvedValue({ data: updateRow, error: null });
-  const updateSelect = vi.fn().mockReturnValue({ single: updateSingle });
+  const updateSelect = vi.fn().mockReturnValue({ maybeSingle: updateSingle });
   const updateEqUser = vi.fn().mockReturnValue({ select: updateSelect });
   const updateEqId = vi.fn().mockReturnValue({ eq: updateEqUser });
   const updateUpdate = vi.fn().mockReturnValue({ eq: updateEqId });

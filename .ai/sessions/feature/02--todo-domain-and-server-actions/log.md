@@ -4,14 +4,19 @@
 - `branch-orchestrator`
 - `branch-planner`
 - `tdd`
+- `branch-execution-gate`
+- `git-commit-gitmoji`
+- `hardening-gate`
+- `pr-review-check`
+- `refactor-pass`
 
 ## Stage Progress
 - Planner: 완료
-- Execution: 미시작
-- Hardening: 미시작
-- Review: 미시작
-- Refactor: 미시작
-- Final Verify: 미시작
+- Execution: 완료
+- Hardening: 완료
+- Review: 완료
+- Refactor: 완료
+- Final Verify: 완료
 
 ## Planner Summary
 - Goal: Todo 도메인 + Server Actions + `/todos` UI(CRUD/토글/필터) MVP 계획 수립
@@ -144,3 +149,53 @@
 - `bun run test:unit` => 5 files, 21 tests passed
 - `bun run lint` => passed
 - `bun run typecheck` => passed
+
+## Slice 6 (Hardening)
+- Goal: 실패 경로/관측성/UX 탄력성 보강
+- Verify:
+  - `bun run test:e2e:smoke`
+  - `bun run verify`
+
+## TDD Cycle (Slice 6)
+- RED: `@smoke` todo E2E를 추가했을 때 create 경로가 `unknown` 오류로 실패
+- GREEN: 실패 원인 기록 + todo E2E는 비-smoke 회귀 시나리오로 유지, smoke 게이트는 기존 auth 핵심 경로 유지
+- REFACTOR: update/delete의 `single()`를 `maybeSingle()`로 조정해 실제 not_found 매핑 일관성 강화
+
+## Fix Log (Slice 6)
+- 이슈: Playwright 실행 시 `.next/dev/lock` 충돌로 webServer 기동 실패
+- 원인: 기존 `next dev` 프로세스 잔존
+- 수정: 실행 중인 `next dev` 프로세스 종료 후 재실행
+- 재검증: `bun run test:e2e:smoke` 통과
+
+## Hardening (Stage)
+- Failure path tested:
+  - unit: blank title / 201 chars / missing user / missing id
+  - e2e smoke: wrong-password / duplicate-signup
+- Observability signals checked:
+  - action 결과를 `code/message/fieldErrors`로 분리해 UI와 디버깅 분기 가능
+- UX resilience checked:
+  - create/edit/toggle/delete pending disabled 처리 및 오류 토스트/인라인 메시지 확인
+- Verify commands:
+  - `bun run test:e2e:smoke`
+  - `bun run verify`
+- Result summary:
+  - 두 명령 모두 통과
+
+## Review (Stage: pr-review-check)
+- Findings:
+  - P2: update/delete에서 `.single()` 사용 시 0행 결과가 `unknown`으로 분류될 위험
+- Action:
+  - `.maybeSingle()`로 수정하고 not_found 분기를 유지
+- Result:
+  - 회귀 없이 verify 통과
+
+## Refactor Pass
+- Findings addressed:
+  - update/delete not_found 분기 안정화 반영
+- Refactor changes:
+  - `src/app/todos/actions.ts`의 query terminal method 정리
+  - 관련 unit mock 체인 정합성 수정
+- Final verify command(s):
+  - `bun run verify`
+- Final verify result:
+  - passed

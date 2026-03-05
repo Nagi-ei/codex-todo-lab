@@ -144,7 +144,7 @@ export async function updateTodoAction(
     .eq("id", id)
     .eq("user_id", userId)
     .select("id,user_id,title,is_completed,created_at,updated_at")
-    .single<TodoRow>();
+    .maybeSingle<TodoRow>();
 
   if (error) {
     return toUnknownResult();
@@ -216,7 +216,7 @@ export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
     .eq("id", id)
     .eq("user_id", userId)
     .select("id,user_id,title,is_completed,created_at,updated_at")
-    .single<TodoRow>();
+    .maybeSingle<TodoRow>();
 
   if (error) {
     return toUnknownResult();

@@ -58,7 +58,7 @@ function createSupabaseMock(options?: {
   const toggleUpdate = vi.fn().mockReturnValue({ eq: toggleEqId });
 
   const deleteSingle = vi.fn().mockResolvedValue({ data: deleteResult, error: null });
-  const deleteSelect = vi.fn().mockReturnValue({ single: deleteSingle });
+  const deleteSelect = vi.fn().mockReturnValue({ maybeSingle: deleteSingle });
   const deleteEqUser = vi.fn().mockReturnValue({ select: deleteSelect });
   const deleteEqId = vi.fn().mockReturnValue({ eq: deleteEqUser });
   const deleteDelete = vi.fn().mockReturnValue({ eq: deleteEqId });
