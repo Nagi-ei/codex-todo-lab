@@ -74,3 +74,24 @@
 ## Verification Result (Slice 1)
 - `bun run test:unit` => 1 file, 6 tests passed
 - `bun run typecheck` => passed
+
+## Slice 2
+- Goal: create/update server action 구현
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 2)
+- RED: `tests/unit/todos/actions-create-update.test.ts` 추가 후 `createTodoAction/updateTodoAction` 미구현 및 alias mock 문제로 실패
+- GREEN: `src/app/todos/action-types.ts`, `src/app/todos/actions.ts`에 create/update 액션 최소 구현
+- REFACTOR: Vitest alias(`@`) 설정을 추가하고 validation/unauthorized/unknown 응답 매핑을 공통화
+
+## Fix Log (Slice 2)
+- 이슈: unauthorized/not_found 테스트가 성공 경로로 오인되어 실패
+- 원인: 테스트 헬퍼의 `??` 기본값 처리로 `null` 옵션이 무시됨
+- 수정: 옵션 존재 여부(`in`) 기반으로 `null`을 보존하도록 헬퍼 수정
+- 재검증: `bun run test:unit && bun run typecheck` 통과
+
+## Verification Result (Slice 2)
+- `bun run test:unit` => 2 files, 11 tests passed
+- `bun run typecheck` => passed
