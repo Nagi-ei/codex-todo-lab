@@ -110,3 +110,20 @@
 ## Verification Result (Slice 3)
 - `bun run test:unit` => 3 files, 16 tests passed
 - `bun run typecheck` => passed
+
+## Slice 4
+- Goal: `/todos` 목록/필터 read UI 구현
+- Verify:
+  - `bun run test:unit`
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 4)
+- RED: `tests/unit/todos/filter.test.ts` 추가 후 `parseTodoFilter` 부재로 실패
+- GREEN: `src/app/todos/filter.ts`, `src/components/todos/todo-filter-tabs.tsx`, `src/components/todos/todo-list.tsx`, `/todos/page.tsx` read 경로 구현
+- REFACTOR: 필터 파싱/URL 구성 책임을 분리하고 페이지에서 searchParams 해석을 함수로 고정
+
+## Verification Result (Slice 4)
+- `bun run test:unit` => 4 files, 19 tests passed
+- `bun run lint` => passed
+- `bun run typecheck` => passed
