@@ -100,6 +100,8 @@ describe("todo toggle/delete actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("unauthorized");
+      expect(result.messageKey).toBe("todo.unauthorized");
+      expect(result.message).toBe("Authentication required.");
       expect(result.response.transportStatus).toBe(200);
       expect(typeof result.response.requestId).toBe("string");
     }
@@ -114,6 +116,8 @@ describe("todo toggle/delete actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("not_found");
+      expect(result.messageKey).toBe("todo.not_found");
+      expect(result.message).toBe("Todo not found.");
       expect(result.response.details?.reason).toBe("todo_not_found");
     }
   });
@@ -146,6 +150,8 @@ describe("todo toggle/delete actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("not_found");
+      expect(result.messageKey).toBe("todo.not_found");
+      expect(result.message).toBe("Todo not found.");
       expect(result.response.details?.reason).toBe("todo_not_found");
     }
   });

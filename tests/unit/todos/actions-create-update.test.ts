@@ -95,9 +95,11 @@ describe("todo create/update actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("validation_failed");
+      expect(result.messageKey).toBe("todo.validation_failed");
+      expect(result.message).toBe("Validation failed.");
       expect(result.response.transportStatus).toBe(200);
       expect(typeof result.response.requestId).toBe("string");
-      expect(result.response.details?.fieldErrors?.title?.[0]).toBeTruthy();
+      expect(result.response.details?.fieldErrors?.title?.[0]).toBe("title_required");
     }
   });
 
@@ -110,6 +112,8 @@ describe("todo create/update actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("unauthorized");
+      expect(result.messageKey).toBe("todo.unauthorized");
+      expect(result.message).toBe("Authentication required.");
       expect(result.response.transportStatus).toBe(200);
       expect(typeof result.response.requestId).toBe("string");
       expect(result.response.details?.reason).toBe("missing_user");
@@ -142,6 +146,8 @@ describe("todo create/update actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("db_insert_failed");
+      expect(result.messageKey).toBe("todo.db_insert_failed");
+      expect(/^[\x00-\x7F]*$/.test(result.message)).toBe(true);
       expect(result.response.details?.reason).toBe("todos_insert_failed");
     }
   });
@@ -155,6 +161,8 @@ describe("todo create/update actions", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.code).toBe("not_found");
+      expect(result.messageKey).toBe("todo.not_found");
+      expect(result.message).toBe("Todo not found.");
       expect(result.response.transportStatus).toBe(200);
       expect(typeof result.response.requestId).toBe("string");
       expect(result.response.details?.reason).toBe("todo_not_found");

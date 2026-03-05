@@ -10,13 +10,14 @@ describe("getTodoActionErrorMessage", () => {
     const message = getTodoActionErrorMessage({
       ok: false,
       code: "validation_failed",
-      message: "입력값을 확인해 주세요.",
+      messageKey: "todo.validation_failed",
+      message: "Validation failed.",
       response: {
         transportStatus: 200,
         requestId: "req_1",
         details: {
           fieldErrors: {
-            title: ["제목을 입력해 주세요."],
+            title: ["title_required"],
           },
         },
       },
@@ -25,25 +26,27 @@ describe("getTodoActionErrorMessage", () => {
     expect(message).toBe("제목을 입력해 주세요.");
   });
 
-  it("falls back to generic action message", () => {
+  it("maps message key to localized message", () => {
     const message = getTodoActionErrorMessage({
       ok: false,
-      code: "unknown",
-      message: "요청을 처리하지 못했습니다.",
+      code: "db_insert_failed",
+      messageKey: "todo.db_insert_failed",
+      message: "Failed to save todo.",
       response: {
         transportStatus: 200,
         requestId: "req_2",
       },
     });
 
-    expect(message).toBe("요청을 처리하지 못했습니다.");
+    expect(message).toBe("할 일을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
   });
 
   it("builds debug label from code and request id", () => {
     const label = getTodoActionDebugLabel({
       ok: false,
       code: "db_insert_failed",
-      message: "할 일을 저장하지 못했습니다.",
+      messageKey: "todo.db_insert_failed",
+      message: "Failed to save todo.",
       response: {
         transportStatus: 200,
         requestId: "req_3",

@@ -6,6 +6,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 import type {
   TodoActionErrorCode,
+  TodoActionMessageKey,
+  TodoTitleFieldErrorKey,
   TodoActionErrorDetails,
   TodoActionResult,
 } from "./action-types";
@@ -38,6 +40,7 @@ function mapTodo(row: TodoRow): Todo {
 
 function toErrorResult(input: {
   code: TodoActionErrorCode;
+  messageKey: TodoActionMessageKey;
   message: string;
   requestId: string;
   details?: TodoActionErrorDetails;
@@ -45,6 +48,7 @@ function toErrorResult(input: {
   return {
     ok: false,
     code: input.code,
+    messageKey: input.messageKey,
     message: input.message,
     response: {
       transportStatus: 200,
@@ -52,6 +56,37 @@ function toErrorResult(input: {
       details: input.details,
     },
   };
+}
+
+function toTitleFieldErrorKeys(error: {
+  issues: Array<{ path: PropertyKey[]; code: string }>;
+}): TodoTitleFieldErrorKey[] {
+  const keys = new Set<TodoTitleFieldErrorKey>();
+
+  for (const issue of error.issues) {
+    const pathHasTitle = issue.path.some((segment) => segment === "title");
+    if (!pathHasTitle) {
+      continue;
+    }
+
+    if (issue.code === "too_small") {
+      keys.add("title_required");
+      continue;
+    }
+
+    if (issue.code === "too_big") {
+      keys.add("title_too_long");
+      continue;
+    }
+
+    keys.add("title_invalid");
+  }
+
+  if (keys.size === 0) {
+    keys.add("title_invalid");
+  }
+
+  return Array.from(keys);
 }
 
 async function getActionContext(): Promise<{
@@ -78,11 +113,14 @@ export async function createTodoAction(
   if (!parsed.success) {
     return toErrorResult({
       code: "validation_failed",
-      message: "입력값을 확인해 주세요.",
+      messageKey: "todo.validation_failed",
+      message: "Validation failed.",
       requestId,
       details: {
         reason: "schema_validation_failed",
-        fieldErrors: parsed.error.flatten().fieldErrors,
+        fieldErrors: {
+          title: toTitleFieldErrorKeys(parsed.error),
+        },
       },
     });
   }
@@ -92,7 +130,8 @@ export async function createTodoAction(
   if (!userId) {
     return toErrorResult({
       code: "unauthorized",
-      message: "로그인이 필요합니다.",
+      messageKey: "todo.unauthorized",
+      message: "Authentication required.",
       requestId,
       details: {
         reason: "missing_user",
@@ -112,7 +151,8 @@ export async function createTodoAction(
   if (error || !data) {
     return toErrorResult({
       code: "db_insert_failed",
-      message: "할 일을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      messageKey: "todo.db_insert_failed",
+      message: "Failed to save todo.",
       requestId,
       details: {
         reason: "todos_insert_failed",
@@ -137,11 +177,14 @@ export async function updateTodoAction(
   if (!parsed.success) {
     return toErrorResult({
       code: "validation_failed",
-      message: "입력값을 확인해 주세요.",
+      messageKey: "todo.validation_failed",
+      message: "Validation failed.",
       requestId,
       details: {
         reason: "schema_validation_failed",
-        fieldErrors: parsed.error.flatten().fieldErrors,
+        fieldErrors: {
+          title: toTitleFieldErrorKeys(parsed.error),
+        },
       },
     });
   }
@@ -151,7 +194,8 @@ export async function updateTodoAction(
   if (!userId) {
     return toErrorResult({
       code: "unauthorized",
-      message: "로그인이 필요합니다.",
+      messageKey: "todo.unauthorized",
+      message: "Authentication required.",
       requestId,
       details: {
         reason: "missing_user",
@@ -178,7 +222,8 @@ export async function updateTodoAction(
   if (error) {
     return toErrorResult({
       code: "db_update_failed",
-      message: "할 일을 수정하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      messageKey: "todo.db_update_failed",
+      message: "Failed to update todo.",
       requestId,
       details: {
         reason: "todos_update_failed",
@@ -190,7 +235,8 @@ export async function updateTodoAction(
   if (!data) {
     return toErrorResult({
       code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
+      messageKey: "todo.not_found",
+      message: "Todo not found.",
       requestId,
       details: {
         reason: "todo_not_found",
@@ -211,7 +257,8 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
   if (!userId) {
     return toErrorResult({
       code: "unauthorized",
-      message: "로그인이 필요합니다.",
+      messageKey: "todo.unauthorized",
+      message: "Authentication required.",
       requestId,
       details: {
         reason: "missing_user",
@@ -229,7 +276,8 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
   if (readError) {
     return toErrorResult({
       code: "db_read_failed",
-      message: "할 일을 조회하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      messageKey: "todo.db_read_failed",
+      message: "Failed to read todo.",
       requestId,
       details: {
         reason: "todo_read_before_toggle_failed",
@@ -241,7 +289,8 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
   if (!currentTodo) {
     return toErrorResult({
       code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
+      messageKey: "todo.not_found",
+      message: "Todo not found.",
       requestId,
       details: {
         reason: "todo_not_found",
@@ -263,7 +312,8 @@ export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
   if (error || !data) {
     return toErrorResult({
       code: "db_update_failed",
-      message: "완료 상태를 변경하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      messageKey: "todo.db_update_failed",
+      message: "Failed to toggle todo completion.",
       requestId,
       details: {
         reason: "todo_toggle_update_failed",
@@ -285,7 +335,8 @@ export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
   if (!userId) {
     return toErrorResult({
       code: "unauthorized",
-      message: "로그인이 필요합니다.",
+      messageKey: "todo.unauthorized",
+      message: "Authentication required.",
       requestId,
       details: {
         reason: "missing_user",
@@ -304,7 +355,8 @@ export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
   if (error) {
     return toErrorResult({
       code: "db_delete_failed",
-      message: "할 일을 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      messageKey: "todo.db_delete_failed",
+      message: "Failed to delete todo.",
       requestId,
       details: {
         reason: "todo_delete_failed",
@@ -316,7 +368,8 @@ export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
   if (!data) {
     return toErrorResult({
       code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
+      messageKey: "todo.not_found",
+      message: "Todo not found.",
       requestId,
       details: {
         reason: "todo_not_found",

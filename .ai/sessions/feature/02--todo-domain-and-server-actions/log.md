@@ -258,3 +258,50 @@
   - `lint` pass
   - `test:unit` pass (23 tests)
   - `test:e2e:smoke` pass (3 tests)
+
+## Slice 8 (Encoding-safe Error Message)
+- Goal: Server Action 200 응답 유지 상태에서 깨지는 한글 메시지를 payload에서 제거하고 클라이언트 매핑으로 복구
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 8)
+- RED: message/messageKey 계약을 테스트에 먼저 반영 후 `messageKey` 부재/로컬라이즈 미적용으로 unit 실패(9 tests)
+- GREEN: 액션 실패 payload를 ASCII-safe로 변경(`messageKey` + 영문 `message` + field error key), presentation에서 key->한글 매핑 적용
+- REFACTOR: validation field error를 raw 한글 대신 키(`title_required/title_too_long/title_invalid`)로 통일
+
+## Hardening (Slice 8)
+- Failure path tested:
+  - validation_failed / unauthorized / not_found / db_insert_failed payload shape
+- Observability signals checked:
+  - `code`, `messageKey`, `response.requestId`, `details.reason/providerMessage` 유지
+- UX resilience checked:
+  - 토스트/인라인 메시지에서 한글 문구 정상 표시 + debug label 유지
+- Verify commands:
+  - `bun run verify`
+- Result summary:
+  - 1차 실패(dev lock), 프로세스 정리 후 2차 통과
+
+## Review (Slice 8)
+- Findings:
+  - P0/P1 없음
+- Checkpoints:
+  - wire payload의 비ASCII 사용자 문구 제거 여부
+  - messageKey 기반 클라이언트 메시지 복구 여부
+
+## Refactor Pass (Slice 8)
+- Refactor changes:
+  - 에러 메시지/필드 오류를 key 중심으로 정규화
+  - presentation 매핑 테이블 단일화
+- Scope guard:
+  - 인코딩 문제 외 기능 확장 없음
+
+## Final Verify (Slice 8)
+- 1차: `bun run verify` 실패 (`.next/dev/lock`)
+- FIX: 잔존 `next dev` 프로세스 종료
+- 2차: `bun run verify` 통과
+  - typecheck: pass
+  - lint: pass
+  - test:unit: pass (23)
+  - test:e2e:smoke: pass (3)
