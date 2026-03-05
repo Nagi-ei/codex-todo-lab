@@ -95,3 +95,18 @@
 ## Verification Result (Slice 2)
 - `bun run test:unit` => 2 files, 11 tests passed
 - `bun run typecheck` => passed
+
+## Slice 3
+- Goal: toggle/delete server action 구현
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 3)
+- RED: `tests/unit/todos/actions-toggle-delete.test.ts` 추가 후 `toggleTodoAction/deleteTodoAction` 미구현으로 실패
+- GREEN: `src/app/todos/actions.ts`에 toggle/delete 액션 추가
+- REFACTOR: 액션 공통 인증 컨텍스트(`getActionContext`)와 not-found 응답 매핑 공통화
+
+## Verification Result (Slice 3)
+- `bun run test:unit` => 3 files, 16 tests passed
+- `bun run typecheck` => passed

@@ -48,6 +48,14 @@ function toUnknownResult(): TodoActionResult {
   };
 }
 
+function toNotFoundResult(): TodoActionResult {
+  return {
+    ok: false,
+    code: "not_found",
+    message: "할 일을 찾을 수 없습니다.",
+  };
+}
+
 function toValidationResult(fieldErrors: TodoActionFieldErrors): TodoActionResult {
   return {
     ok: false,
@@ -57,13 +65,19 @@ function toValidationResult(fieldErrors: TodoActionFieldErrors): TodoActionResul
   };
 }
 
-async function getUserId(): Promise<string | null> {
+async function getActionContext(): Promise<{
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
+  userId: string | null;
+}> {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return user?.id ?? null;
+  return {
+    supabase,
+    userId: user?.id ?? null,
+  };
 }
 
 export async function createTodoAction(
@@ -75,8 +89,7 @@ export async function createTodoAction(
     return toValidationResult(parsed.error.flatten().fieldErrors);
   }
 
-  const supabase = await createSupabaseServerClient();
-  const userId = await getUserId();
+  const { supabase, userId } = await getActionContext();
 
   if (!userId) {
     return toUnauthorizedResult();
@@ -111,8 +124,7 @@ export async function updateTodoAction(
     return toValidationResult(parsed.error.flatten().fieldErrors);
   }
 
-  const supabase = await createSupabaseServerClient();
-  const userId = await getUserId();
+  const { supabase, userId } = await getActionContext();
 
   if (!userId) {
     return toUnauthorizedResult();
@@ -139,11 +151,79 @@ export async function updateTodoAction(
   }
 
   if (!data) {
-    return {
-      ok: false,
-      code: "not_found",
-      message: "할 일을 찾을 수 없습니다.",
-    };
+    return toNotFoundResult();
+  }
+
+  return {
+    ok: true,
+    todo: mapTodo(data),
+  };
+}
+
+export async function toggleTodoAction(id: string): Promise<TodoActionResult> {
+  const { supabase, userId } = await getActionContext();
+
+  if (!userId) {
+    return toUnauthorizedResult();
+  }
+
+  const { data: currentTodo, error: readError } = await supabase
+    .from("todos")
+    .select("id,user_id,title,is_completed,created_at,updated_at")
+    .eq("id", id)
+    .eq("user_id", userId)
+    .maybeSingle<TodoRow>();
+
+  if (readError) {
+    return toUnknownResult();
+  }
+
+  if (!currentTodo) {
+    return toNotFoundResult();
+  }
+
+  const { data, error } = await supabase
+    .from("todos")
+    .update({
+      is_completed: !currentTodo.is_completed,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select("id,user_id,title,is_completed,created_at,updated_at")
+    .single<TodoRow>();
+
+  if (error || !data) {
+    return toUnknownResult();
+  }
+
+  return {
+    ok: true,
+    todo: mapTodo(data),
+  };
+}
+
+export async function deleteTodoAction(id: string): Promise<TodoActionResult> {
+  const { supabase, userId } = await getActionContext();
+
+  if (!userId) {
+    return toUnauthorizedResult();
+  }
+
+  const { data, error } = await supabase
+    .from("todos")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select("id,user_id,title,is_completed,created_at,updated_at")
+    .single<TodoRow>();
+
+  if (error) {
+    return toUnknownResult();
+  }
+
+  if (!data) {
+    return toNotFoundResult();
   }
 
   return {
