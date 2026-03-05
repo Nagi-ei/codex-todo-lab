@@ -305,3 +305,16 @@
   - lint: pass
   - test:unit: pass (23)
   - test:e2e:smoke: pass (3)
+
+## Slice 9 (Supabase Migration Scaffold)
+- Goal: Supabase migration 경로와 초기 파일 준비
+- Verify:
+  - `test -f supabase/migrations/20260306022000_create_todos.sql`
+
+## TDD Cycle (Slice 9)
+- RED: `supabase/migrations` 경로 및 migration 파일 부재
+- GREEN: `supabase/migrations/20260306022000_create_todos.sql` 생성
+- REFACTOR: migration 파일 헤더(목적/브랜치/적용 경로) 명시
+
+## Verification Result (Slice 9)
+- `test -f ...` => migration scaffold OK
