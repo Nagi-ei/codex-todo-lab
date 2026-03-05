@@ -220,3 +220,41 @@
 ## Notes (Slice 7)
 - 네트워크 응답은 200을 유지하되 payload 기준으로 실패 추적 가능
 - 실패 시 확인 포인트: `ok=false`, `code`, `response.requestId`, `response.details.reason/providerMessage`
+
+## Orchestrator Re-run (Slice 7 correction)
+- Scope: `Server Action 200 유지 + payload(code/message/response) 추적성 강화` 변경 건을 `branch-orchestrator` 6단계로 재검증
+
+### 1) Planner
+- 계획 기준: Slice 7 (`RED/GREEN/REFACTOR`) 계약 유지
+- 산출 확인: `thread.md`, `log.md` 존재 및 Slice 7 계획/결과 기록 확인
+
+### 2) Execution
+- 실행 근거: `♻️ refactor: enrich todo action error payload diagnostics` 커밋 (`5154e01`)
+- TDD 증거: Slice 7 `RED -> GREEN -> REFACTOR` 로그 확인
+
+### 3) Hardening
+- 실패 경로 점검: validation/unauthorized/not_found/db_* 실패 응답에 requestId/details 포함 여부 unit 테스트로 확인
+- UX/관측성 점검: 토스트에 `code · requestId` 표시, dev 콘솔에 payload 로깅
+
+### 4) Review
+- 점검 결과: P0/P1 이슈 없음
+- 확인 포인트:
+  - 에러 코드 세분화(`db_read/insert/update/delete_failed`) 적용
+  - payload 계약(`response.transportStatus/requestId/details`) 일관성
+
+### 5) Refactor
+- 적용 사항:
+  - 에러 라벨 포맷터(`getTodoActionDebugLabel`)로 중복 축소
+  - `actions` 내 에러 응답 생성 경로 통합
+- 스코프 확장 없음
+
+### 6) Final Verify
+- 1차 `bun run verify` 실패:
+  - 원인: `.next/dev/lock` (잔존 `next dev` 프로세스)
+- FIX:
+  - 실행 중 `next dev` 프로세스 종료 후 재실행
+- 2차 `bun run verify` 결과:
+  - `typecheck` pass
+  - `lint` pass
+  - `test:unit` pass (23 tests)
+  - `test:e2e:smoke` pass (3 tests)
