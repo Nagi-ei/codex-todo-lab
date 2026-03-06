@@ -1,56 +1,67 @@
-# AGENTS.md
+# agents.md
 
-## Working Agreement
-1. 모든 작업은 `[계획 -> 구현 -> 검증 -> 수정]` 순서로 진행한다.
-2. 구현 전에는 목표/완료조건/제외범위를 먼저 명시한다.
-3. 구현 후에는 반드시 검증 명령을 실행하고 결과를 요약한다.
-4. 실패 시 원인/수정사항/재검증 결과를 기록한다.
-5. 새 작업 시작 시 `/Users/nagi/Downloads/codex-test/docs/MASTER-PLAN.md`, `/Users/nagi/Downloads/codex-test/docs/PRD.md`, `/Users/nagi/Downloads/codex-test/docs/BRANCH-DEVELOPMENT-PLAN.md`, 현재 브랜치 세션 폴더 로그를 먼저 읽는다.
-6. 매 작업에서 실제 사용한 스킬 이름을 요약에 명시한다.
-7. 작업이 특정 스킬의 범위와 일치하면 반드시 해당 스킬을 사용한다.
+## Goal
+- Next.js App Router + React + TypeScript 기준으로 코드 일관성을 강제한다.
+- 컴포넌트, 상태 관리, 서버 경계, 폴더 구조를 명확히 나눠 유지보수 비용을 낮춘다.
 
-## Scope Discipline
-1. 플랜에 명시된 기능만 구현한다.
-2. 계획된 범위를 넘어서는 추가 기능/리팩터링은 요청이 있을 때만 수행한다.
-3. 구현은 항상 최소 단위(MVP)로 끝낸다.
+## Done Criteria
+1. 새 기능이 추가되어도 파일 책임이 바로 읽힌다.
+2. 비즈니스 로직, 서버 호출, UI 상태가 섞이지 않는다.
+3. 리뷰 시 구조 위반을 빠르게 지적할 수 있다.
 
-## Component Rules
-1. 한 파일에는 하나의 export 컴포넌트만 작성한다.
-2. 반복 패턴이 생기면 보조 컴포넌트를 별도 파일로 분리한다.
+## Out of Scope
+1. 디자인 토큰 전면 개편
+2. 상태 관리 라이브러리 추가 도입
+3. 백엔드 아키텍처 변경
 
-## Branch & Session Policy
-1. 브랜치 prefix는 `feature`, `ui`, `refactor`, `fix` 중 하나만 사용한다.
-2. 브랜치 이름 형식은 `<prefix>/<branch-number>--<slug-and-so-on>`으로 고정한다.
-3. 세션 이름은 브랜치 이름과 동일하게 사용한다.
-4. 세션 폴더는 `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/`로 생성한다.
-5. 새 작업 시작 시 `/Users/nagi/Downloads/codex-test/.ai/sessions/_template/thread.md`를 복사해 세션 폴더 안에 `thread.md`로 채운다.
-6. 세션 진행 로그는 세션 폴더의 `log.md`에 누적한다.
-7. handoff는 세션 폴더의 `handoff.md`에 기록한다.
-8. `log.md`와 `handoff.md`에는 `used_skills` 섹션을 필수로 남긴다.
+## Core Rules
+1. React 컴포넌트는 200줄을 넘기지 않는다. 200줄에 가까워지면 하위 프레젠테이션 컴포넌트나 hook으로 분리한다.
+2. 컴포넌트 안에 비즈니스 로직을 직접 작성하지 않는다. 계산, 검증, 변환, 권한 분기, 서버 오케스트레이션은 `hook`, `service`, `schema`, `presentation` 계층으로 분리한다.
+3. `page.tsx`는 라우트 진입점 역할만 맡는다. 데이터 로드, 권한 확인, 섹션 조합만 하고 비즈니스 계산은 넣지 않는다.
+4. 공통 UI는 기존 디자인 시스템과 shadcn/ui를 우선 재사용한다. 새 UI를 만들기 전에 `src/components/ui`와 기존 조합 컴포넌트를 먼저 확인한다.
+5. 새 유틸, helper, formatter를 만들기 전에 기존 `src/lib`와 도메인 유틸을 검색한다.
+6. `any`는 금지한다. 불확실한 값은 `unknown`으로 받고 좁혀서 사용한다.
+7. 클라이언트 컴포넌트에서 직접 API를 호출하지 않는다. 서버 액션, 전용 service, React Query mutation 경유만 허용한다.
 
-## Quality Gates
-1. PR 전 `bun run verify`를 우선 실행한다.
-2. 필요 시 `bun run typecheck`, `bun run test:unit`, `bun run test:e2e:smoke`를 개별 실행해 원인을 분리한다.
-3. 접근성 기본 체크(라벨, 키보드 포커스, 콘트라스트)를 수행한다.
-4. 보안 규칙: 비밀키는 서버 전용, 클라이언트 노출 금지.
+## React / Next.js Rules
+1. 기본은 Server Component다. 브라우저 이벤트, 브라우저 API, client-only state가 필요할 때만 `"use client"`를 선언한다.
+2. `useEffect`는 외부 시스템 동기화에만 사용한다. 예: DOM API, subscription, timer, analytics, imperative bridge. 데이터 fetch, props-to-state 복사, 파생값 계산 용도로 쓰지 않는다.
+3. 파생값은 렌더링 중 계산하거나 selector/helper로 분리한다. `useEffect` + `setState` 조합으로 만들지 않는다.
+4. 폼은 `react-hook-form`을 기본으로 사용한다. 입력 검증은 가능하면 Zod 같은 스키마와 함께 둔다.
+5. 서버 상태는 TanStack Query로 다룬다. UI 상태만 `useState`를 사용한다.
+6. 읽기(R)는 Server Component에서 직접 가져온다. 불필요한 `useQuery`로 초기 데이터를 다시 요청하지 않는다.
+7. 생성/수정/삭제(CUD)는 Server Action + `useMutation` 조합을 기본으로 한다. 성공 시 관련 query cache invalidation 또는 서버 리프레시 전략을 명시한다.
+8. Route Handler는 기본 구현 수단이 아니다. 폼 액션, 사용자 상호작용, 내부 CRUD는 Server Action을 우선한다. 단, webhook, 외부 callback, 공개 API endpoint는 Route Handler를 허용한다.
+9. 컴포넌트 파일은 UI 표현에 집중한다. 데이터 접근과 도메인 규칙은 상위 서버 계층 또는 전용 hook/service가 담당한다.
 
-## TDD Rules
-1. 기능 구현 전 실패하는 테스트(또는 명시적인 검증 시나리오)를 먼저 정의한다.
-2. 구현은 테스트를 통과시키는 최소 코드부터 작성한다.
-3. 테스트 통과 후 리팩터링하고 동일 테스트를 재실행한다.
-4. 세션 로그에 `red -> green -> refactor` 결과를 기록한다.
+## State And Data Boundaries
+1. 서버에서 가져온 데이터는 가능한 한 서버에서 정규화하고 클라이언트에는 화면에 필요한 shape만 전달한다.
+2. 클라이언트에서 서버 데이터를 복제한 로컬 state를 만들지 않는다. 폼 draft, dialog open 여부, 탭 전환 같은 UI 상태만 로컬에 둔다.
+3. mutation은 낙관적 업데이트 여부, 실패 처리, invalidate 대상 query key를 함께 설계한다.
+4. 비밀키와 admin client는 서버 전용 파일에만 둔다. 클라이언트 번들로 흘러가면 안 된다.
 
-## Commit Rules
-1. 브랜치에서 작은 단위 기능(UI, 기능, 테스트) 완료 시 즉시 커밋한다.
-2. 커밋 메시지는 영어로 작성한다.
-3. 커밋 메시지 형식은 `:gitmoji: type: summary`를 기본으로 사용한다.
-4. `type`은 `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`만 사용한다.
-5. 기본 매핑은 `feat->✨`, `fix->🐛`, `docs->📝`, `style->🎨`, `refactor->♻️`, `test->✅`, `chore->🔧`를 사용한다.
-6. 변경 의도가 더 명확해지면 다른 gitmoji를 사용할 수 있다.
-7. gitmoji를 바꿔도 `type`은 반드시 유지한다.
-8. 예시: `✨ feat: add todo create action`, `✅ test: add auth smoke case`, `🚑️ fix: patch login redirect crash`.
+## Folder Structure
+1. 역할별 폴더 구조를 유지한다.
+2. `src/app/*`: route segment, layout, page, loading, error, server action entry.
+3. `src/features/<domain>/*`: domain hook, service, schema, formatter, presentation helper, client component.
+4. `src/components/ui/*`: 디자인 시스템 단위 컴포넌트.
+5. `src/components/<domain>/*`: 여러 route에서 재사용되는 조합 컴포넌트.
+6. `src/lib/*`: 전역 util, framework adapter, 외부 SDK client. 도메인 규칙은 두지 않는다.
+7. 파일 하나에 책임 하나를 유지한다. 반복되는 패턴이 2회 이상 나오면 분리 여부를 검토한다.
 
-## UI Rules (shadcn/ui + Tailwind)
-1. 기본 컴포넌트는 shadcn/ui를 우선 사용한다.
-2. Tailwind 커스텀은 spacing/typography/state color 중심으로 제한한다.
-3. 모바일 우선으로 구현하고 데스크톱 max-width 컨테이너를 적용한다.
+## Review Checklist
+1. 컴포넌트가 200줄 이하인가.
+2. 비즈니스 로직이 컴포넌트에서 분리되었는가.
+3. `useEffect`가 외부 시스템 동기화 외 목적으로 쓰이지 않았는가.
+4. 서버 상태와 UI 상태가 섞이지 않았는가.
+5. 폼이 `react-hook-form` 기준으로 구성되었는가.
+6. 직접 API 호출이나 `fetch`가 클라이언트 컴포넌트 안에 없는가.
+7. `page.tsx`가 계산 로직 없이 조합 역할만 하는가.
+8. 기존 UI/util 재사용 검토가 선행되었는가.
+9. 타입 우회(`any`, 과도한 assertion)가 없는가.
+
+## Default Decision
+- 애매하면 Server Component 우선
+- 애매하면 Server Action 우선
+- 애매하면 기존 컴포넌트/유틸 재사용 우선
+- 애매하면 작은 파일과 단일 책임 우선
