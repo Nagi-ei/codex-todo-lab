@@ -22,6 +22,11 @@
 - GREEN: `agents.md`에 컴포넌트 크기, 상태 관리, server action, React Query, 폴더 구조, 리뷰 체크리스트를 작성했다.
 - REFACTOR: Route Handler 전면 금지처럼 과도한 규칙은 webhook/public endpoint 예외를 둔 기본 규칙으로 다듬었다.
 
+## TDD Cycle
+- RED: 추가 피드백으로 남겼던 `Server Component 기본`, 최소 props 전달, mutation 후속 처리, `src/features/<domain>` 강제 기준이 문서상 약하다는 점을 보강 대상으로 정의했다.
+- GREEN: `"use client"` 최소 범위, serializable/minimal props, invalidate/refresh 전략 명시, `src/features/<domain>` 배치 규칙을 문서와 리뷰 체크리스트에 추가했다.
+- REFACTOR: 기존 규칙과 겹치는 표현은 피하고, 실제 리뷰 기준으로 바로 사용할 수 있는 문장으로 정리했다.
+
 ## Verification
 - Commands:
   - `bun run verify`
