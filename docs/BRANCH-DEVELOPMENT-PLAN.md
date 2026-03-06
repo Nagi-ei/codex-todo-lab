@@ -100,12 +100,24 @@ PRD와 Master Plan을 실행 가능한 브랜치 단위로 분해하고, 각 브
 - 문서 경로/명령 재현성 점검
 
 ## Per-Branch Session Checklist
-1. 세션 시작: `thread.md` 생성
+1. 세션 시작: `plan.md` 생성 + `plans/01-branch-baseline.md` 스냅샷 생성
 2. 계획 작성: 목표/완료조건/제외범위
 3. 구현: 계획된 범위만 수행
 4. 검증: 명령 실행 및 결과 기록
 5. 수정: 실패 원인/패치/재검증 기록
 6. 종료: `handoff.md` 작성
+
+## Session Document Structure
+1. `plan.md`: 현재 유효한 최신 계획만 유지하는 기준 문서
+2. `plans/*.md`: 각 cycle/replan 시점의 계획 스냅샷 아카이브
+3. `log.md`: 실행 이력, replan 사유, 검증/수정 기록을 누적
+4. `handoff.md`: 현재 상태, 남은 이슈, 다음 액션만 요약
+
+## Replan Rule
+1. 첫 계획은 `plans/01-branch-baseline.md`로 저장하고 동일 내용을 `plan.md`에 반영한다.
+2. 이후 review/fix/refactor 등으로 새 cycle이 열리면 `plans/<nn>-<slug>.md`를 새로 추가한다.
+3. 새 cycle 계획이 승인되면 `plan.md`를 최신 내용으로 갱신한다.
+4. 왜 계획이 바뀌었는지는 `log.md`에 남긴다.
 
 ## Notes
 1. 한 번에 하나의 브랜치만 active 상태로 진행한다.

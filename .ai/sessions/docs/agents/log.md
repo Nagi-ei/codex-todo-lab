@@ -27,6 +27,11 @@
 - GREEN: `"use client"` 최소 범위, serializable/minimal props, invalidate/refresh 전략 명시, `src/features/<domain>` 배치 규칙을 문서와 리뷰 체크리스트에 추가했다.
 - REFACTOR: 기존 규칙과 겹치는 표현은 피하고, 실제 리뷰 기준으로 바로 사용할 수 있는 문장으로 정리했다.
 
+## TDD Cycle
+- RED: `thread.md` 중심 구조는 최신 계획과 계획 히스토리를 동시에 담기 어렵고, 재사이클 시 현재 기준 문서와 과거 스냅샷이 섞인다는 문제를 확인했다.
+- GREEN: 세션 구조를 `plan.md + plans/*.md + log.md + handoff.md`로 정리하고, 템플릿/브랜치 운영 문서/전역 스킬을 같은 모델로 맞췄다.
+- REFACTOR: `plan.md`는 최신 기준만, `plans/*.md`는 스냅샷 아카이브, `log.md`는 append-only 실행 기록이라는 역할 분리를 명시했다.
+
 ## Verification
 - Commands:
   - `bun run verify`
