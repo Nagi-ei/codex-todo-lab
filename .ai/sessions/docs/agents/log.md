@@ -37,6 +37,11 @@
 - GREEN: 루트에 `SCAFFOLD_STRUCTURE.md`를 추가해 canonical structure, 배치 규칙, 금지 규칙, 새 도메인 scaffold, 판단 순서를 문서화했다.
 - REFACTOR: 구조 문서는 별도 루트 문서로 분리하고, 세션 문서는 cycle 기록만 남기도록 정리했다.
 
+## TDD Cycle
+- RED: `AGENTS.md`와 `SCAFFOLD_STRUCTURE.md`에 폴더 구조 규칙이 중복되어 있어, 이후 수정 시 두 문서를 같이 관리해야 하는 상태였다.
+- GREEN: `AGENTS.md`의 상세 폴더 구조 섹션을 제거하고 `SCAFFOLD_STRUCTURE.md`를 정본으로 참조하도록 정리했다.
+- REFACTOR: `AGENTS.md`는 원칙과 리뷰 기준, `SCAFFOLD_STRUCTURE.md`는 실제 배치 규칙이라는 역할 분리로 문서 책임을 맞췄다.
+
 ## Verification
 - Commands:
   - `bun run verify`

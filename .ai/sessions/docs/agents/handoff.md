@@ -6,6 +6,7 @@
 - Route Handler는 기본 금지로 두되 webhook/public API 예외를 명시했다.
 - 세션 문서 구조를 `plan.md + plans/*.md + log.md + handoff.md`로 정리하고, 전역 스킬/템플릿/브랜치 운영 문서에 반영했다.
 - 루트에 `SCAFFOLD_STRUCTURE.md`를 추가해 역할별 폴더 구조와 새 도메인 scaffold 기준을 문서화했다.
+- `AGENTS.md`의 구조 중복을 줄이고 `SCAFFOLD_STRUCTURE.md`를 구조 규칙의 정본으로 참조하도록 정리했다.
 
 ## Verification
 - `bun run verify` 통과

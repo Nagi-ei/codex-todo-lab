@@ -2,7 +2,7 @@
 
 ## Goal
 - Next.js App Router + React + TypeScript 기준으로 코드 일관성을 강제한다.
-- 컴포넌트, 상태 관리, 서버 경계, 폴더 구조를 명확히 나눠 유지보수 비용을 낮춘다.
+- 컴포넌트, 상태 관리, 서버 경계를 명확히 나눠 유지보수 비용을 낮춘다.
 
 ## Done Criteria
 1. 새 기능이 추가되어도 파일 책임이 바로 읽힌다.
@@ -22,6 +22,7 @@
 5. 새 유틸, helper, formatter를 만들기 전에 기존 `src/lib`와 도메인 유틸을 검색한다.
 6. `any`는 금지한다. 불확실한 값은 `unknown`으로 받고 좁혀서 사용한다.
 7. 클라이언트 컴포넌트에서 직접 API를 호출하지 않는다. 서버 액션, 전용 service, React Query mutation 경유만 허용한다.
+8. 새 파일 배치와 역할별 폴더 구조는 [`SCAFFOLD_STRUCTURE.md`](/Users/nagi/Downloads/codex-test/SCAFFOLD_STRUCTURE.md)를 기준으로 따른다.
 
 ## React / Next.js Rules
 1. 기본은 Server Component다. 브라우저 이벤트, 브라우저 API, client-only state가 필요할 때만 `"use client"`를 선언한다.
@@ -43,16 +44,10 @@
 5. Server Component에서 Client Component로 넘기는 props는 serializable 하고 최소여야 한다. 원본 응답 전체를 그대로 전달하지 않는다.
 6. 서버에서 해결 가능한 정렬, 필터링, 권한 판정, 데이터 병합은 서버에서 끝내고 클라이언트에는 렌더링에 필요한 값만 전달한다.
 
-## Folder Structure
-1. 역할별 폴더 구조를 유지한다.
-2. `src/app/*`: route segment, layout, page, loading, error, server action entry.
-3. `src/features/<domain>/*`: domain hook, service, schema, formatter, presentation helper, client component.
-4. `src/components/ui/*`: 디자인 시스템 단위 컴포넌트.
-5. `src/components/<domain>/*`: 여러 route에서 재사용되는 조합 컴포넌트.
-6. `src/lib/*`: 전역 util, framework adapter, 외부 SDK client. 도메인 규칙은 두지 않는다.
-7. 파일 하나에 책임 하나를 유지한다. 반복되는 패턴이 2회 이상 나오면 분리 여부를 검토한다.
-8. 새 기능은 우선 `src/features/<domain>` 아래에 배치한다. `app`에는 route 진입 코드만, `components`에는 범용 UI 조합만 남긴다.
-9. hook은 `src/features/<domain>/hooks`, 서버 호출 오케스트레이션은 `services`, 입력/출력 계약은 `schema` 또는 `types`에 둔다.
+## Structure Reference
+1. 역할별 폴더 구조의 정본은 [`SCAFFOLD_STRUCTURE.md`](/Users/nagi/Downloads/codex-test/SCAFFOLD_STRUCTURE.md)다.
+2. `AGENTS.md`는 아키텍처 원칙과 리뷰 기준을 정의하고, 실제 파일 배치 규칙은 `SCAFFOLD_STRUCTURE.md`를 따른다.
+3. 새 기능은 항상 `SCAFFOLD_STRUCTURE.md`의 `Decision Order`와 `Placement Rules`를 먼저 확인하고 시작한다.
 
 ## Review Checklist
 1. 컴포넌트가 200줄 이하인가.
@@ -67,7 +62,7 @@
 10. `"use client"` 범위가 최소화되어 있는가.
 11. 서버에서 클라이언트로 넘기는 데이터가 최소 shape인가.
 12. mutation 이후 invalidate/refresh 전략이 분명한가.
-13. 새 기능이 `src/features/<domain>` 구조를 따르는가.
+13. 새 기능이 [`SCAFFOLD_STRUCTURE.md`](/Users/nagi/Downloads/codex-test/SCAFFOLD_STRUCTURE.md)의 구조 규칙을 따르는가.
 
 ## Default Decision
 - 애매하면 Server Component 우선
