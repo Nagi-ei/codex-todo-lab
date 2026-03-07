@@ -22,6 +22,38 @@ Run checks with two users (A/B):
 3. User A updates/deletes user B rows -> blocked.
 4. Insert with mismatched `user_id` -> blocked.
 
+## Branch 03 Operational Validation Record
+
+Use this format when closing `feature/03--supabase-rls-and-security-hardening`.
+
+Required fields:
+- validation date/time
+- Supabase project or environment
+- actor (`user A` or `user B`)
+- scenario
+- expected result
+- actual result
+- supporting note, screenshot reference, or error message
+
+Recommended scenario set:
+1. User A inserts own todo row -> success
+2. User B reads user A rows -> blocked or zero rows
+3. User B updates user A row -> blocked
+4. User B deletes user A row -> blocked
+5. Authenticated user inserts with mismatched `user_id` -> blocked
+
+Example record:
+
+```md
+- Date/Time: `2026-03-08 15:30 KST`
+- Environment: `Supabase dev project`
+- Actor: `user B`
+- Scenario: `update user A row`
+- Expected: `RLS blocks update because auth.uid() != user_id`
+- Actual: `Update failed with policy error`
+- Evidence: `SQL editor result / app error message`
+```
+
 ## Drift warning
 - If you run the SQL manually in Dashboard, your remote database can drift from the migration history tracked in git.
 - Prefer `supabase db push` for normal branch workflow.
