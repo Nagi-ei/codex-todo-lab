@@ -32,6 +32,11 @@
 - GREEN: 세션 구조를 `plan.md + plans/*.md + log.md + handoff.md`로 정리하고, 템플릿/브랜치 운영 문서/전역 스킬을 같은 모델로 맞췄다.
 - REFACTOR: `plan.md`는 최신 기준만, `plans/*.md`는 스냅샷 아카이브, `log.md`는 append-only 실행 기록이라는 역할 분리를 명시했다.
 
+## TDD Cycle
+- RED: 역할별 폴더 구조를 강제하는 전용 문서가 없어 새 파일 배치 기준이 `AGENTS.md` 일부 규칙에 흩어져 있었고, scaffold 예시도 별도 문서로 존재하지 않았다.
+- GREEN: 루트에 `SCAFFOLD_STRUCTURE.md`를 추가해 canonical structure, 배치 규칙, 금지 규칙, 새 도메인 scaffold, 판단 순서를 문서화했다.
+- REFACTOR: 구조 문서는 별도 루트 문서로 분리하고, 세션 문서는 cycle 기록만 남기도록 정리했다.
+
 ## Verification
 - Commands:
   - `bun run verify`
