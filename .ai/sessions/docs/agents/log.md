@@ -42,6 +42,11 @@
 - GREEN: `AGENTS.md`의 상세 폴더 구조 섹션을 제거하고 `SCAFFOLD_STRUCTURE.md`를 정본으로 참조하도록 정리했다.
 - REFACTOR: `AGENTS.md`는 원칙과 리뷰 기준, `SCAFFOLD_STRUCTURE.md`는 실제 배치 규칙이라는 역할 분리로 문서 책임을 맞췄다.
 
+## TDD Cycle
+- RED: `AGENTS.md`에 프론트엔드 아키텍처 규칙과 리뷰 체크리스트가 계속 남아 있어, 새 전용 스킬들과 중복 관리가 발생하는 상태였다.
+- GREEN: 프론트엔드 상세 규칙은 `frontend-architecture-rules`, 리뷰 기준은 `pr-review-check`, 브랜치 전체 사이클은 `branch-cycle-orchestrator`를 참조하도록 `AGENTS.md`를 정리했다.
+- REFACTOR: `AGENTS.md`를 세부 구현 규칙집이 아니라 전역 원칙과 스킬 라우팅 문서 역할에 맞게 축약했다.
+
 ## Verification
 - Commands:
   - `bun run verify`
