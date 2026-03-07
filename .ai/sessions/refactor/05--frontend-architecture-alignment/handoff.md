@@ -19,15 +19,16 @@
 - Slice 10 completed: todo action contracts moved into feature types and auth/logout ownership was corrected with auth smoke plus typecheck passing.
 - Slice 11 completed: todo mutation persistence moved into `src/features/todos/repositories/todo-repository.ts` and the service layer now keeps validation/auth/use-case orchestration only.
 - Slice 12 completed: cycle 4 full verify passed and branch 05 is structurally closed.
+- Cycle 5 planning reopened: current target is to collapse todo wrapper layers, move UI mutation orchestration into feature hooks, and remove the repository layer if it stays low-value.
 
 ## Next Actions
 
-1. Open branch 06 and align project docs with the final branch-05 structure.
-2. Use the current feature-local action/service/repository layout as the canonical reference in docs.
-3. Keep any future parity cleanup separate from the docs branch unless a new review finding justifies reopening branch 05.
+1. Execute Slice 13 by updating scaffold policy for direct Server Actions and feature-local UI mutation hooks.
+2. Execute Slice 14 by removing todo wrapper layers, extracting todo mutation hooks, and simplifying the mutation path.
+3. After cycle 5 closes, branch 06 can align docs with the new action/hook structure.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- No functional follow-up remains on branch 05 unless a new review finding reopens it.
+- Cycle 5 intentionally reopens branch 05, so branch 06 docs work should wait until the new structure settles.

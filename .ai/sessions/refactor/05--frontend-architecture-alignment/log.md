@@ -353,3 +353,15 @@
   - `bun run lint` => pass
   - `bun run test:unit` => pass (6 files, 26 tests)
   - `bun run test:e2e:smoke` => pass (4 tests)
+
+## Replan (Cycle 5)
+
+- Date: `2026-03-08`
+- Trigger:
+  - follow-up structure review found that todo Server Actions still act as forwarding-only wrappers, todo components still own `useMutation` wiring, and the repository layer still reads as low-value indirection.
+- Replan decision:
+  - reopen branch 05 for one more cycle focused on direct Server Actions, feature-local UI mutation hooks, and removal of todo-only wrapper layers.
+- Architectural decision:
+  - todo Server Actions become the actual mutation implementation boundary.
+  - UI mutation orchestration moves into `src/features/todos/hooks/*`.
+  - repository/service files are kept only if they still expose a meaningful shared responsibility after the collapse.
