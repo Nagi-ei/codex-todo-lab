@@ -1,4 +1,4 @@
-import type { TodoActionResult } from "@/app/todos/action-types";
+import type { TodoActionResult } from "@/features/todos/types/todo-action";
 import { createTodoSchema, updateTodoSchema } from "@/features/todos/schema/todo";
 import { mapTodo } from "@/features/todos/presentation/todo";
 import type { CreateTodoInput, TodoRow, UpdateTodoInput } from "@/features/todos/types/todo";

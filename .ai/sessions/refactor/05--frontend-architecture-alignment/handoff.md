@@ -16,15 +16,16 @@
 - Slice 8 completed: todo mutation action entrypoints moved into `src/features/todos/actions/*` and targeted action tests plus typecheck passed.
 - Slice 9 completed: cycle 3 full verify passed and branch 05 final structure is ready for docs alignment.
 - Cycle 4 planning opened to finish the remaining action-boundary issues: action contract placement, auth/logout ownership, and deeper todo mutation separation.
+- Slice 10 completed: todo action contracts moved into feature types and auth/logout ownership was corrected with auth smoke plus typecheck passing.
 
 ## Next Actions
 
-1. Execute Slice 10 by moving todo action contracts out of `src/app` and relocating auth/logout action ownership into the auth feature.
-2. Execute Slice 11 by separating todo mutation use-case orchestration from persistence details.
+1. Execute Slice 11 by separating todo mutation use-case orchestration from direct Supabase persistence.
+2. Re-run targeted todo action tests and typecheck before moving to cycle 4 closure.
 3. After cycle 4 closes, branch 06 can align repository docs with the actual final structure.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- Remaining branch-05 work is now limited to the unresolved action-boundary issues opened in cycle 4.
+- Remaining branch-05 work is now limited to deeper todo mutation separation and cycle 4 final verification.

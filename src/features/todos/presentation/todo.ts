@@ -1,4 +1,4 @@
-import type { TodoActionResult } from "@/app/todos/action-types";
+import type { TodoActionResult } from "@/features/todos/types/todo-action";
 import type { Todo, TodoRow } from "@/features/todos/types/todo";
 
 const TODO_MESSAGE_KEY_MAP = {

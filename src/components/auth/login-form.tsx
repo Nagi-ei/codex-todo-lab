@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { toast } from "sonner";
 
-import { loginMutationAction } from "@/app/auth/actions";
 import {
   buildAuthErrorToastKey,
   formatLearningAuthErrorToast,
 } from "@/components/auth/auth-error-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { loginMutationAction } from "@/features/auth/actions/login";
 
 export function LoginForm() {
   const router = useRouter();

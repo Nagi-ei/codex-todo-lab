@@ -4,7 +4,7 @@ import type {
   TodoActionMessageKey,
   TodoActionResult,
   TodoTitleFieldErrorKey,
-} from "@/app/todos/action-types";
+} from "@/features/todos/types/todo-action";
 
 export function createRequestId(): string {
   return `todo_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;

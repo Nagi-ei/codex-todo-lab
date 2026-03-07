@@ -281,3 +281,27 @@
   - the earlier `src/app/todos/page.tsx` review finding was already resolved in cycle 2 and is not the reason cycle 4 is opening.
 - Replan decision:
   - open cycle 4 to finish the action-boundary work by relocating shared contracts, fixing auth ownership, and deepening the mutation separation into `action -> service -> repository`.
+
+## Slice 10 (Action Contracts And Auth Ownership)
+
+- Goal: action contract와 auth/logout ownership을 올바른 feature boundary로 정렬한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - route layer에는 action contract와 auth mutation entry를 남기지 않는다.
+  - logout은 auth feature가 소유한다.
+  - UI call sites는 feature-local action file을 직접 참조한다.
+- Verify:
+  - `bun run test:e2e:smoke --grep auth`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 10)
+
+- RED: `src/app/todos/action-types.ts`, `src/app/auth/actions.ts`, `src/features/todos/actions/logout.ts`가 각각 잘못된 layer 또는 잘못된 feature ownership에 남아 있었다.
+- GREEN: todo action contract를 `src/features/todos/types/todo-action.ts`로 옮기고, auth action entry와 logout을 `src/features/auth/actions/*`로 재배치했다.
+- REFACTOR: component/page/presentation/service import를 새 feature 경계로 정리하고 legacy route/action files를 제거했다.
+
+## Verification Result (Slice 10)
+
+- `rg -n "app/todos/action-types|app/auth/actions|features/todos/actions/logout" src tests` => no matches
+- `bun run test:e2e:smoke --grep auth` => pass (3 tests)
+- `bun run typecheck` => pass
