@@ -129,3 +129,15 @@
   - `bun run lint` => pass
   - `bun run test:unit` => pass (6 files, 26 tests)
   - `bun run test:e2e:smoke` => pass (4 tests)
+
+## Replan (Cycle 2)
+
+- Date: `2026-03-08`
+- Trigger:
+  - review found that `src/app/todos/page.tsx` still owns todo read orchestration even after cycle 1 refactors.
+- Review finding summary:
+  - route entry still creates the Supabase client, builds the todo query, branches on filter values, and fetches rows directly.
+  - this is acceptable enough to ship functionally, but it is the main remaining boundary inconsistency against `frontend-architecture-rules`.
+- Replan decision:
+  - reopen branch 05 for a second cycle focused only on extracting the todo read path from the route entry.
+  - keep all other branch-05 changes closed unless the new extraction exposes a regression.
