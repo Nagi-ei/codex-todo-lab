@@ -305,3 +305,26 @@
 - `rg -n "app/todos/action-types|app/auth/actions|features/todos/actions/logout" src tests` => no matches
 - `bun run test:e2e:smoke --grep auth` => pass (3 tests)
 - `bun run typecheck` => pass
+
+## Slice 11 (Todo Mutation Service And Repository Split)
+
+- Goal: todo mutation path를 실제로 `action -> service -> repository`로 분리한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - feature-local action files는 thin server entry로 유지한다.
+  - service는 validation, auth boundary, use-case orchestration에 집중한다.
+  - Supabase I/O는 repository layer로 격리한다.
+- Verify:
+  - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 11)
+
+- RED: `src/features/todos/services/todo-mutations.ts`가 validation, auth context, Supabase write/read 체인, result shaping을 한 파일에 모두 들고 있어서 service와 persistence 책임이 섞여 있었다.
+- GREEN: `src/features/todos/repositories/todo-repository.ts`를 추가해 insert/update/find/delete Supabase access를 분리하고, `todo-mutations.ts`는 validation/auth/use-case orchestration과 action result shaping만 남기도록 정리했다.
+- REFACTOR: repository 함수 이름을 `insertTodoForUser`, `updateTodoForUser`, `findTodoForUser`, `deleteTodoForUser`로 맞춰 persistence responsibility가 import 수준에서도 드러나게 했다.
+
+## Verification Result (Slice 11)
+
+- `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
+- `bun run typecheck` => pass

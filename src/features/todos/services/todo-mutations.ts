@@ -1,7 +1,13 @@
 import type { TodoActionResult } from "@/features/todos/types/todo-action";
 import { createTodoSchema, updateTodoSchema } from "@/features/todos/schema/todo";
 import { mapTodo } from "@/features/todos/presentation/todo";
-import type { CreateTodoInput, TodoRow, UpdateTodoInput } from "@/features/todos/types/todo";
+import {
+  deleteTodoForUser,
+  findTodoForUser,
+  insertTodoForUser,
+  updateTodoForUser,
+} from "@/features/todos/repositories/todo-repository";
+import type { CreateTodoInput, UpdateTodoInput } from "@/features/todos/types/todo";
 
 import { getTodoActionContext } from "./action-context";
 import { createRequestId, toErrorResult, toTitleFieldErrorKeys } from "./action-result";
@@ -41,14 +47,11 @@ export async function createTodoMutation(
     });
   }
 
-  const { data, error } = await supabase
-    .from("todos")
-    .insert({
-      user_id: userId,
-      title: parsed.data.title,
-    })
-    .select("id,user_id,title,is_completed,created_at,updated_at")
-    .single<TodoRow>();
+  const { data, error } = await insertTodoForUser({
+    supabase,
+    userId,
+    title: parsed.data.title,
+  });
 
   if (error || !data) {
     return toErrorResult({
@@ -113,13 +116,12 @@ export async function updateTodoMutation(
     payload.title = parsed.data.title;
   }
 
-  const { data, error } = await supabase
-    .from("todos")
-    .update(payload)
-    .eq("id", id)
-    .eq("user_id", userId)
-    .select("id,user_id,title,is_completed,created_at,updated_at")
-    .maybeSingle<TodoRow>();
+  const { data, error } = await updateTodoForUser({
+    supabase,
+    userId,
+    todoId: id,
+    patch: payload,
+  });
 
   if (error) {
     return toErrorResult({
@@ -168,12 +170,11 @@ export async function toggleTodoMutation(id: string): Promise<TodoActionResult> 
     });
   }
 
-  const { data: currentTodo, error: readError } = await supabase
-    .from("todos")
-    .select("id,user_id,title,is_completed,created_at,updated_at")
-    .eq("id", id)
-    .eq("user_id", userId)
-    .maybeSingle<TodoRow>();
+  const { data: currentTodo, error: readError } = await findTodoForUser({
+    supabase,
+    userId,
+    todoId: id,
+  });
 
   if (readError) {
     return toErrorResult({
@@ -200,16 +201,16 @@ export async function toggleTodoMutation(id: string): Promise<TodoActionResult> 
     });
   }
 
-  const { data, error } = await supabase
-    .from("todos")
-    .update({
+  const { data, error } = await updateTodoForUser({
+    supabase,
+    userId,
+    todoId: id,
+    patch: {
       is_completed: !currentTodo.is_completed,
       updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .eq("user_id", userId)
-    .select("id,user_id,title,is_completed,created_at,updated_at")
-    .single<TodoRow>();
+    },
+    expectSingle: true,
+  });
 
   if (error || !data) {
     return toErrorResult({
@@ -246,13 +247,11 @@ export async function deleteTodoMutation(id: string): Promise<TodoActionResult> 
     });
   }
 
-  const { data, error } = await supabase
-    .from("todos")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", userId)
-    .select("id,user_id,title,is_completed,created_at,updated_at")
-    .maybeSingle<TodoRow>();
+  const { data, error } = await deleteTodoForUser({
+    supabase,
+    userId,
+    todoId: id,
+  });
 
   if (error) {
     return toErrorResult({
