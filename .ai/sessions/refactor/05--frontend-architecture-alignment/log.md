@@ -57,3 +57,26 @@
 
 - `rg -n "app/todos/(filter|presentation|read-error|schema|types)" src tests` => no matches
 - `bun run test:unit -- tests/unit/todos/schema.test.ts tests/unit/todos/filter.test.ts tests/unit/todos/presentation.test.ts tests/unit/todos/read-error.test.ts` => pass (4 files, 15 tests)
+
+## Slice 2 (Todo Action Decomposition)
+
+- Goal: `src/app/todos/actions.ts`를 thin entry로 줄이고 feature service로 책임을 분리한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `use server` entry는 route layer에 유지하고 validation/context/persistence/result shaping은 feature service로 이동한다.
+  - action public interface(`createTodoAction`, `updateTodoAction`, `toggleTodoAction`, `deleteTodoAction`)는 유지한다.
+  - 도메인 로직을 `src/lib`나 client hook으로 우회시키지 않는다.
+- Verify:
+  - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 2)
+
+- RED: 현재 action tests는 public entrypoints를 기준으로 하고 있지만, 실제 구현은 `src/app/todos/actions.ts` 한 파일에 validation, auth context, persistence, error shaping이 섞여 있었다.
+- GREEN: action context, error/result helpers, CRUD/toggle persistence orchestration을 `src/features/todos/services/*`로 이동하고 `src/app/todos/actions.ts`는 thin wrapper로 축소했다.
+- REFACTOR: `createRequestId`, `toErrorResult`, `toTitleFieldErrorKeys`를 공통 service helper로 추출해 create/update/toggle/delete 흐름 중복을 줄였다.
+
+## Verification Result (Slice 2)
+
+- `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
+- `bun run typecheck` => pass
