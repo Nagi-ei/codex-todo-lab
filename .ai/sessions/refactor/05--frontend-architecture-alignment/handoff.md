@@ -18,15 +18,16 @@
 - Cycle 4 planning opened to finish the remaining action-boundary issues: action contract placement, auth/logout ownership, and deeper todo mutation separation.
 - Slice 10 completed: todo action contracts moved into feature types and auth/logout ownership was corrected with auth smoke plus typecheck passing.
 - Slice 11 completed: todo mutation persistence moved into `src/features/todos/repositories/todo-repository.ts` and the service layer now keeps validation/auth/use-case orchestration only.
+- Slice 12 completed: cycle 4 full verify passed and branch 05 is structurally closed.
 
 ## Next Actions
 
-1. Execute Slice 12 with branch-wide `bun run verify` and close cycle 4.
-2. Record the final canonical structure in handoff after full verification passes.
-3. After cycle 4 closes, branch 06 can align repository docs with the actual final structure.
+1. Open branch 06 and align project docs with the final branch-05 structure.
+2. Use the current feature-local action/service/repository layout as the canonical reference in docs.
+3. Keep any future parity cleanup separate from the docs branch unless a new review finding justifies reopening branch 05.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- Remaining branch-05 work is now limited to cycle 4 final verification and closure artifacts.
+- No functional follow-up remains on branch 05 unless a new review finding reopens it.

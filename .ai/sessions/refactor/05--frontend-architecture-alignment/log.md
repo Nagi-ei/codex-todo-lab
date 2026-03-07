@@ -328,3 +328,28 @@
 
 - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
 - `bun run typecheck` => pass
+
+## Slice 12 (Cycle 4 Final Verification)
+
+- Goal: cycle 4 closure와 branch-wide verification을 완료한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - action, service, repository responsibilities가 현재 구조에서 import 경계만 봐도 드러나야 한다.
+  - full verify는 cycle 4 structural changes 전체를 다시 통과해야 한다.
+  - branch 05 follow-up은 branch 06 문서 정렬만 남겨야 한다.
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 12)
+
+- RED: slice 10~11의 경계 조정이 끝나도 branch-wide verification이 없으면 auth, todos, route-entry only policy가 실제 앱 흐름에서 안전한지 닫을 수 없었다.
+- GREEN: `bun run verify`를 다시 실행해 typecheck, lint, unit, smoke e2e를 모두 통과시켰다.
+- REFACTOR: handoff를 cycle 4 완료 상태 기준으로 압축하고, branch 06에서 이어갈 문서 정렬만 남기도록 다음 액션을 정리했다.
+
+## Verification Result (Slice 12)
+
+- `bun run verify` => pass
+  - `bun run typecheck` => pass
+  - `bun run lint` => pass
+  - `bun run test:unit` => pass (6 files, 26 tests)
+  - `bun run test:e2e:smoke` => pass (4 tests)
