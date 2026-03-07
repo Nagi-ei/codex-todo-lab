@@ -246,3 +246,28 @@
 - `rg -n "app/todos/actions|services/todo-actions" src tests` => no matches
 - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
 - `bun run typecheck` => pass
+
+## Slice 9 (Cycle 3 Final Verification)
+
+- Goal: cycle 3 branch-wide verification을 완료하고 최종 구조를 고정한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `src/app`는 route entry만 유지되고, feature-local Server Actions가 실제로 동작해야 한다.
+  - action 내부 auth/validation 경계가 새 위치로 이동해도 유지돼야 한다.
+  - cycle 3에서는 추가 범위 확장 없이 최종 검증과 handoff만 수행한다.
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 9)
+
+- RED: policy와 action relocation이 끝나도 full-project verification이 없으면 새로운 구조가 auth/todo 전체 플로우를 깨뜨리지 않았다는 보장이 없었다.
+- GREEN: `bun run verify`를 실행해 typecheck, lint, unit, smoke e2e를 모두 통과시켰다.
+- REFACTOR: handoff를 최종 구조 기준으로 정리하고, branch 06이 이어받을 문서 정렬 포인트만 남겼다.
+
+## Verification Result (Slice 9)
+
+- `bun run verify` => pass
+  - `bun run typecheck` => pass
+  - `bun run lint` => pass
+  - `bun run test:unit` => pass (6 files, 26 tests)
+  - `bun run test:e2e:smoke` => pass (4 tests)

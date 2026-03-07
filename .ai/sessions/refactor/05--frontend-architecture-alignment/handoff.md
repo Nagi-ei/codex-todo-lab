@@ -14,15 +14,16 @@
 - Cycle 3 planning opened to formalize feature-local Server Actions and remove route-level action wrappers.
 - Slice 7 completed: scaffold now defines feature-local Server Actions and route-entry only `app`.
 - Slice 8 completed: todo mutation action entrypoints moved into `src/features/todos/actions/*` and targeted action tests plus typecheck passed.
+- Slice 9 completed: cycle 3 full verify passed and branch 05 final structure is ready for docs alignment.
 
 ## Next Actions
 
-1. Execute Slice 9 by running full-project verification for cycle 3 and closing the branch artifacts.
-2. If verify stays green, branch 05 can hand off cleanly to branch 06 documentation alignment.
-3. Only mirror the same action placement pattern to auth if a later branch explicitly decides to enforce parity there too.
+1. Open branch 06 and align README, master/branch docs, and learning notes with the final feature-local action structure.
+2. If future cleanup is needed, consider whether auth actions should also move to `src/features/auth/actions/*` for full structural parity.
+3. Keep `supabase/.temp/` out of later commits unless a future task explicitly needs local CLI state.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- Remaining branch-05 work is now limited to cycle 3 full verification and closure.
+- No active code-level blocker remains in branch 05; the next work is documentation alignment in branch 06.
