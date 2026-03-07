@@ -164,3 +164,28 @@
 
 - `bun run test:e2e:smoke --grep todos` => pass (1 test)
 - `bun run typecheck` => pass
+
+## Slice 6 (Cycle 2 Final Verification)
+
+- Goal: cycle 2 branch-wide verification을 완료하고 재오픈된 finding 해소 상태를 고정한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `/todos` route entry가 read orchestration 대신 route composition에 머무는지 다시 확인한다.
+  - final verify 실패 시 cycle 2는 Slice 5로 되돌아간다.
+  - cycle 2에서는 추가 범위 확장 없이 기존 finding 해소 여부만 확정한다.
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 6)
+
+- RED: cycle 2 변경 후 full-project verification이 없으면 read-path extraction이 auth/todo 전체 흐름에 안전한지 확정할 수 없었다.
+- GREEN: `bun run verify`를 다시 실행해 typecheck, lint, unit, smoke e2e를 모두 통과시켰다.
+- REFACTOR: handoff를 cycle 2 완료 상태 기준으로 정리하고, branch 06이 이어받을 문서 작업과 구조 리스크를 분리해 기록했다.
+
+## Verification Result (Slice 6)
+
+- `bun run verify` => pass
+  - `bun run typecheck` => pass
+  - `bun run lint` => pass
+  - `bun run test:unit` => pass (6 files, 26 tests)
+  - `bun run test:e2e:smoke` => pass (4 tests)

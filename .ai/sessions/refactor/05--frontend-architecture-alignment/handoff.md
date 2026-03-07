@@ -10,15 +10,16 @@
 - Slice 4 completed: full verify passed for cycle 1.
 - Cycle 2 planning opened from review finding on todo read orchestration in `src/app/todos/page.tsx`.
 - Slice 5 completed: todo read orchestration moved into `src/features/todos/services/todo-read.ts` and todos smoke plus typecheck passed.
+- Slice 6 completed: cycle 2 full verify passed and branch 05 is ready to hand off to branch 06 docs work.
 
 ## Next Actions
 
-1. Execute Slice 6 by running full-project verification and confirming the prior review finding is resolved.
-2. If verify stays green, close branch 05 cycle 2 and hand off branch 06 for docs alignment.
-3. Only reopen branch 05 again if review finds another real boundary issue after the read-path extraction.
+1. Open branch 06 and align README, master/branch docs, and learning notes with the final `src/features/auth` and `src/features/todos` layout.
+2. If this branch is reviewed again, confirm the prior `src/app/todos/page.tsx` finding is now resolved rather than opening a third cycle by default.
+3. Keep `supabase/.temp/` out of subsequent commits unless a future task explicitly needs local CLI state.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- Remaining risk is now limited to reviewer judgment on whether the current `/todos` route composition is sufficiently thin after the read-path extraction.
+- No active code-level blocker remains from branch 05; remaining follow-up is documentation alignment in branch 06.
