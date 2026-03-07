@@ -1,4 +1,4 @@
-# Thread
+# Plan
 
 ## Meta
 - Session Name (== Branch):
@@ -6,6 +6,8 @@
 - Prefix: `feature | ui | refactor | fix`
 - Date:
 - Owner:
+- Current Cycle:
+- Plan Snapshot:
 
 ## Goal
 - 이번 세션에서 달성할 목표 1~2줄
@@ -19,7 +21,7 @@
 1.
 2.
 
-## Plan
+## Active Slices
 1.
 2.
 3.
@@ -34,16 +36,11 @@
 
 ## Verification
 - Commands:
-  - `npm run typecheck`
-  - `npm run test:unit`
-  - `npm run test:e2e:smoke`
 - 결과 요약:
 
-## Fix Log
-- 이슈:
-- 원인:
-- 수정:
-- 재검증:
+## Open Risks
+- 현재 cycle 기준 남은 위험 요소
 
 ## Handoff Pointer
 - Write to: `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/handoff.md`
+- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/plans/01-branch-baseline.md`
