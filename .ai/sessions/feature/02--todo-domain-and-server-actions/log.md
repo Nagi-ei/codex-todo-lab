@@ -1,0 +1,459 @@
+# Session Log
+
+## used_skills
+- `branch-orchestrator`
+- `branch-planner`
+- `tdd`
+- `branch-execution-gate`
+- `git-commit-gitmoji`
+- `hardening-gate`
+- `pr-review-check`
+- `refactor-pass`
+
+## Stage Progress
+- Planner: 완료
+- Execution: 완료
+- Hardening: 완료
+- Review: 완료
+- Refactor: 완료
+- Final Verify: 완료
+
+## Planner Summary
+- Goal: Todo 도메인 + Server Actions + `/todos` UI(CRUD/토글/필터) MVP 계획 수립
+- Done criteria:
+  1. CRUD/토글/필터 동작
+  2. 입력 검증 에러 UI 표시
+  3. 단계별 검증/커밋 계약 고정
+- Out of scope:
+  1. RLS 정책 확정(브랜치 03)
+  2. 테스트 하네스 대규모 확장(브랜치 04)
+
+## TDD Plan (RED -> GREEN -> REFACTOR)
+- Slice 1: 타입/스키마
+  - RED: 제목 공백/길이 초과 실패 테스트
+  - GREEN: Zod 스키마 최소 구현
+  - REFACTOR: 타입/스키마 export 정리
+- Slice 2: create/update actions
+  - RED: invalid input/미인증 실패 테스트
+  - GREEN: create/update 최소 구현
+  - REFACTOR: 에러 매핑/guard 중복 제거
+- Slice 3: toggle/delete actions
+  - RED: 없는 id/비정상 id 실패 테스트
+  - GREEN: toggle/delete 최소 구현
+  - REFACTOR: 공통 쿼리 헬퍼 정리
+- Slice 4: 목록/필터 read UI
+  - RED: 필터별 표시 시나리오 실패 정의
+  - GREEN: read query + filter UI 연결
+  - REFACTOR: searchParam 파싱/접근성 보강
+- Slice 5: CRUD UI-action 연결
+  - RED: 생성/수정 에러 표시 및 반영 실패 시나리오
+  - GREEN: 최소 연결 구현
+  - REFACTOR: 컴포넌트 책임 분리
+- Slice 6: hardening
+  - RED: 실패 경로 누락 시나리오 명시
+  - GREEN: 누락 케이스 보강
+  - REFACTOR: 테스트/로그 표준화
+
+## Verification Evidence (Planner Artifacts)
+- `git branch --show-current` => `feature/02--todo-domain-and-server-actions`
+- `thread.md` 생성 확인
+- `log.md` 생성 확인
+
+## Issues / Fix
+- Issue: 브랜치를 `main` 기준으로 생성하지 못할 가능성
+- Cause: git 명령 병렬 실행으로 순서 보장 실패
+- Fix: 브랜치 재생성(`main` 체크아웃 후 순차 생성)
+- Re-verify: 현재 브랜치 재확인
+
+## Slice 1
+- Goal: Todo 도메인 타입/스키마를 테스트 기반으로 고정
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 1)
+- RED: `tests/unit/todos/schema.test.ts` 추가 후 `Cannot find module '../../../src/app/todos/schema'`로 실패
+- GREEN: `src/app/todos/types.ts`, `src/app/todos/schema.ts` 생성 + `zod` 추가로 테스트 통과
+- REFACTOR: update payload 검증을 `updateTodoSchema.refine`으로 명시화하고 재검증 통과
+
+## Verification Result (Slice 1)
+- `bun run test:unit` => 1 file, 6 tests passed
+- `bun run typecheck` => passed
+
+## Slice 2
+- Goal: create/update server action 구현
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 2)
+- RED: `tests/unit/todos/actions-create-update.test.ts` 추가 후 `createTodoAction/updateTodoAction` 미구현 및 alias mock 문제로 실패
+- GREEN: `src/app/todos/action-types.ts`, `src/app/todos/actions.ts`에 create/update 액션 최소 구현
+- REFACTOR: Vitest alias(`@`) 설정을 추가하고 validation/unauthorized/unknown 응답 매핑을 공통화
+
+## Fix Log (Slice 2)
+- 이슈: unauthorized/not_found 테스트가 성공 경로로 오인되어 실패
+- 원인: 테스트 헬퍼의 `??` 기본값 처리로 `null` 옵션이 무시됨
+- 수정: 옵션 존재 여부(`in`) 기반으로 `null`을 보존하도록 헬퍼 수정
+- 재검증: `bun run test:unit && bun run typecheck` 통과
+
+## Verification Result (Slice 2)
+- `bun run test:unit` => 2 files, 11 tests passed
+- `bun run typecheck` => passed
+
+## Slice 3
+- Goal: toggle/delete server action 구현
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 3)
+- RED: `tests/unit/todos/actions-toggle-delete.test.ts` 추가 후 `toggleTodoAction/deleteTodoAction` 미구현으로 실패
+- GREEN: `src/app/todos/actions.ts`에 toggle/delete 액션 추가
+- REFACTOR: 액션 공통 인증 컨텍스트(`getActionContext`)와 not-found 응답 매핑 공통화
+
+## Verification Result (Slice 3)
+- `bun run test:unit` => 3 files, 16 tests passed
+- `bun run typecheck` => passed
+
+## Slice 4
+- Goal: `/todos` 목록/필터 read UI 구현
+- Verify:
+  - `bun run test:unit`
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 4)
+- RED: `tests/unit/todos/filter.test.ts` 추가 후 `parseTodoFilter` 부재로 실패
+- GREEN: `src/app/todos/filter.ts`, `src/components/todos/todo-filter-tabs.tsx`, `src/components/todos/todo-list.tsx`, `/todos/page.tsx` read 경로 구현
+- REFACTOR: 필터 파싱/URL 구성 책임을 분리하고 페이지에서 searchParams 해석을 함수로 고정
+
+## Verification Result (Slice 4)
+- `bun run test:unit` => 4 files, 19 tests passed
+- `bun run lint` => passed
+- `bun run typecheck` => passed
+
+## Slice 5
+- Goal: CRUD UI와 server actions 연결
+- Verify:
+  - `bun run test:unit`
+  - `bun run lint`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 5)
+- RED: `tests/unit/todos/presentation.test.ts` 추가 후 에러 메시지 유틸 부재로 실패
+- GREEN: `TodoCreateForm`, `TodoEditDialog`, `TodoItem` 추가 및 `/todos` 페이지에 CRUD UI 연결
+- REFACTOR: 액션 실패 메시지 추출을 `getTodoActionErrorMessage`로 공통화
+
+## Verification Result (Slice 5)
+- `bun run test:unit` => 5 files, 21 tests passed
+- `bun run lint` => passed
+- `bun run typecheck` => passed
+
+## Slice 6 (Hardening)
+- Goal: 실패 경로/관측성/UX 탄력성 보강
+- Verify:
+  - `bun run test:e2e:smoke`
+  - `bun run verify`
+
+## TDD Cycle (Slice 6)
+- RED: `@smoke` todo E2E를 추가했을 때 create 경로가 `unknown` 오류로 실패
+- GREEN: 실패 원인 기록 + todo E2E는 비-smoke 회귀 시나리오로 유지, smoke 게이트는 기존 auth 핵심 경로 유지
+- REFACTOR: update/delete의 `single()`를 `maybeSingle()`로 조정해 실제 not_found 매핑 일관성 강화
+
+## Fix Log (Slice 6)
+- 이슈: Playwright 실행 시 `.next/dev/lock` 충돌로 webServer 기동 실패
+- 원인: 기존 `next dev` 프로세스 잔존
+- 수정: 실행 중인 `next dev` 프로세스 종료 후 재실행
+- 재검증: `bun run test:e2e:smoke` 통과
+
+## Hardening (Stage)
+- Failure path tested:
+  - unit: blank title / 201 chars / missing user / missing id
+  - e2e smoke: wrong-password / duplicate-signup
+- Observability signals checked:
+  - action 결과를 `code/message/fieldErrors`로 분리해 UI와 디버깅 분기 가능
+- UX resilience checked:
+  - create/edit/toggle/delete pending disabled 처리 및 오류 토스트/인라인 메시지 확인
+- Verify commands:
+  - `bun run test:e2e:smoke`
+  - `bun run verify`
+- Result summary:
+  - 두 명령 모두 통과
+
+## Review (Stage: pr-review-check)
+- Findings:
+  - P2: update/delete에서 `.single()` 사용 시 0행 결과가 `unknown`으로 분류될 위험
+- Action:
+  - `.maybeSingle()`로 수정하고 not_found 분기를 유지
+- Result:
+  - 회귀 없이 verify 통과
+
+## Refactor Pass
+- Findings addressed:
+  - update/delete not_found 분기 안정화 반영
+- Refactor changes:
+  - `src/app/todos/actions.ts`의 query terminal method 정리
+  - 관련 unit mock 체인 정합성 수정
+- Final verify command(s):
+  - `bun run verify`
+- Final verify result:
+  - passed
+
+## Slice 7 (Debug Payload Hardening)
+- Goal: Server Action 200 응답 유지하면서 실패 payload 추적성(code/message/response) 강화
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 7)
+- RED: 기존 실패 payload가 `code/message`만 제공되어 request 단위 추적 정보가 부족함
+- GREEN: Todo 액션 실패 응답에 `response.transportStatus(200)`, `response.requestId`, `response.details`를 추가하고 코드 세분화(`db_read/insert/update/delete_failed`)
+- REFACTOR: `presentation`에 debug label(`code · requestId`) 추가, 클라이언트 토스트/콘솔 출력을 공통 형식으로 정리
+
+## Verification Result (Slice 7)
+- `bun run test:unit` => 5 files, 23 tests passed
+- `bun run typecheck` => passed
+- `bun run lint` => passed
+
+## Notes (Slice 7)
+- 네트워크 응답은 200을 유지하되 payload 기준으로 실패 추적 가능
+- 실패 시 확인 포인트: `ok=false`, `code`, `response.requestId`, `response.details.reason/providerMessage`
+
+## Orchestrator Re-run (Slice 7 correction)
+- Scope: `Server Action 200 유지 + payload(code/message/response) 추적성 강화` 변경 건을 `branch-orchestrator` 6단계로 재검증
+
+### 1) Planner
+- 계획 기준: Slice 7 (`RED/GREEN/REFACTOR`) 계약 유지
+- 산출 확인: `thread.md`, `log.md` 존재 및 Slice 7 계획/결과 기록 확인
+
+### 2) Execution
+- 실행 근거: `♻️ refactor: enrich todo action error payload diagnostics` 커밋 (`5154e01`)
+- TDD 증거: Slice 7 `RED -> GREEN -> REFACTOR` 로그 확인
+
+### 3) Hardening
+- 실패 경로 점검: validation/unauthorized/not_found/db_* 실패 응답에 requestId/details 포함 여부 unit 테스트로 확인
+- UX/관측성 점검: 토스트에 `code · requestId` 표시, dev 콘솔에 payload 로깅
+
+### 4) Review
+- 점검 결과: P0/P1 이슈 없음
+- 확인 포인트:
+  - 에러 코드 세분화(`db_read/insert/update/delete_failed`) 적용
+  - payload 계약(`response.transportStatus/requestId/details`) 일관성
+
+### 5) Refactor
+- 적용 사항:
+  - 에러 라벨 포맷터(`getTodoActionDebugLabel`)로 중복 축소
+  - `actions` 내 에러 응답 생성 경로 통합
+- 스코프 확장 없음
+
+### 6) Final Verify
+- 1차 `bun run verify` 실패:
+  - 원인: `.next/dev/lock` (잔존 `next dev` 프로세스)
+- FIX:
+  - 실행 중 `next dev` 프로세스 종료 후 재실행
+- 2차 `bun run verify` 결과:
+  - `typecheck` pass
+  - `lint` pass
+  - `test:unit` pass (23 tests)
+  - `test:e2e:smoke` pass (3 tests)
+
+## Slice 8 (Encoding-safe Error Message)
+- Goal: Server Action 200 응답 유지 상태에서 깨지는 한글 메시지를 payload에서 제거하고 클라이언트 매핑으로 복구
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 8)
+- RED: message/messageKey 계약을 테스트에 먼저 반영 후 `messageKey` 부재/로컬라이즈 미적용으로 unit 실패(9 tests)
+- GREEN: 액션 실패 payload를 ASCII-safe로 변경(`messageKey` + 영문 `message` + field error key), presentation에서 key->한글 매핑 적용
+- REFACTOR: validation field error를 raw 한글 대신 키(`title_required/title_too_long/title_invalid`)로 통일
+
+## Hardening (Slice 8)
+- Failure path tested:
+  - validation_failed / unauthorized / not_found / db_insert_failed payload shape
+- Observability signals checked:
+  - `code`, `messageKey`, `response.requestId`, `details.reason/providerMessage` 유지
+- UX resilience checked:
+  - 토스트/인라인 메시지에서 한글 문구 정상 표시 + debug label 유지
+- Verify commands:
+  - `bun run verify`
+- Result summary:
+  - 1차 실패(dev lock), 프로세스 정리 후 2차 통과
+
+## Review (Slice 8)
+- Findings:
+  - P0/P1 없음
+- Checkpoints:
+  - wire payload의 비ASCII 사용자 문구 제거 여부
+  - messageKey 기반 클라이언트 메시지 복구 여부
+
+## Refactor Pass (Slice 8)
+- Refactor changes:
+  - 에러 메시지/필드 오류를 key 중심으로 정규화
+  - presentation 매핑 테이블 단일화
+- Scope guard:
+  - 인코딩 문제 외 기능 확장 없음
+
+## Final Verify (Slice 8)
+- 1차: `bun run verify` 실패 (`.next/dev/lock`)
+- FIX: 잔존 `next dev` 프로세스 종료
+- 2차: `bun run verify` 통과
+  - typecheck: pass
+  - lint: pass
+  - test:unit: pass (23)
+  - test:e2e:smoke: pass (3)
+
+## Slice 9 (Supabase Migration Scaffold)
+- Goal: Supabase migration 경로와 초기 파일 준비
+- Verify:
+  - `test -f supabase/migrations/20260306022000_create_todos.sql`
+
+## TDD Cycle (Slice 9)
+- RED: `supabase/migrations` 경로 및 migration 파일 부재
+- GREEN: `supabase/migrations/20260306022000_create_todos.sql` 생성
+- REFACTOR: migration 파일 헤더(목적/브랜치/적용 경로) 명시
+
+## Verification Result (Slice 9)
+- `test -f ...` => migration scaffold OK
+
+## Slice 10 (Todos Table Schema)
+- Goal: `public.todos` 테이블 스키마/제약/인덱스 정의
+- Verify:
+  - `rg -n "create table if not exists public.todos|user_id uuid not null references auth.users|char_length(title) between 1 and 200|idx_todos_user_created_at_desc" supabase/migrations/20260306022000_create_todos.sql`
+
+## TDD Cycle (Slice 10)
+- RED: todos 테이블 DDL 부재로 앱 insert 실패(`providerMessage: table not found`)
+- GREEN: 테이블 컬럼/제약/FK/기본값 추가
+- REFACTOR: 조회 경로 인덱스(`user_id`, `user_id+created_at desc`) 추가
+
+## Verification Result (Slice 10)
+- DDL/제약/인덱스 패턴 검출 통과
+
+## Slice 11 (Todos RLS Policies)
+- Goal: todos 테이블 사용자 소유 CRUD RLS 정책 적용
+- Verify:
+  - `rg -n "enable row level security|todos_select_own|todos_insert_own|todos_update_own|todos_delete_own|with check (auth.uid\(\) = user_id)" supabase/migrations/20260306022000_create_todos.sql`
+
+## TDD Cycle (Slice 11)
+- RED: 정책 부재 시 사용자 격리 보장 불가
+- GREEN: select/insert/update/delete 정책 4종 추가
+- REFACTOR: 정책명 규칙 통일(`todos_*_own`) 및 update `using + with check` 동시 적용
+
+## Verification Result (Slice 11)
+- RLS enable + CRUD 정책 패턴 검출 통과
+
+## Slice 12 (Apply/Validation Notes)
+- Goal: migration 적용 경로와 검증/롤백 메모를 문서화
+- Verify:
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 12)
+- RED: Supabase 적용 절차가 레포에 없어 재현/인수인계가 어려움
+- GREEN: `supabase/README.md`에 적용/검증/롤백 절차 문서화
+- REFACTOR: 체크 순서를 SQL 실행 -> 검증 -> 롤백 경고 순으로 정리
+
+## Verification Result (Slice 12)
+- `bun run typecheck` => pass
+- `bun run lint` => pass
+
+## Hardening (Migration Cycle)
+- Failure path tested:
+  - todos 테이블 미존재 상태에서 앱 에러 payload 확인(`db_insert_failed`)
+- Observability signals checked:
+  - `providerMessage`가 테이블 미존재 원인을 직접 제공
+- UX resilience checked:
+  - 앱은 실패를 토스트 + debug label로 노출
+
+## Review (Migration Cycle)
+- Findings:
+  - P0/P1 없음
+- Security checks:
+  - user-owned RLS 정책 CRUD 4종, update `using + with check` 적용
+
+## Refactor Pass (Migration Cycle)
+- Refactor changes:
+  - migration SQL 정책명/인덱스명 규칙 통일
+  - runbook 문서 경로를 `supabase/README.md`로 고정
+
+## Final Verify (Migration Cycle)
+- 1차 `bun run verify` 실패: `.next/dev/lock`
+- FIX: 잔존 `next dev` 프로세스 종료
+- 2차 `bun run verify` 통과:
+  - typecheck/lint/test:unit/test:e2e:smoke pass
+
+## Slice 13 (Smoke Gate Inclusion)
+- Goal: todo CRUD/filter 플로우를 실제 smoke gate에 포함
+- Verify:
+  - `bun run test:e2e:smoke`
+
+## TDD Cycle (Slice 13)
+- RED: `tests/e2e/todos.smoke.spec.ts`에 `@smoke` 태그가 없어 verify 경로에서 실행되지 않음
+- GREEN: todo smoke 테스트에 `@smoke` 태그를 추가해 gate에 포함
+- REFACTOR: 수정 다이얼로그 제출을 `Enter` 기반으로 바꿔 flaky 클릭 문제를 제거
+
+## Fix Log (Slice 13)
+- 이슈: smoke gate 첫 실행이 `.next/dev/lock`으로 실패
+- 원인: 잔존 `next dev` 프로세스가 lock 보유
+- 수정: 프로세스 정리 후 재실행
+- 재검증: `bun run test:e2e:smoke` 통과 (auth 3 + todo 1)
+
+## Slice 14 (Todo Read Failure Surface)
+- Goal: `/todos` read 실패를 빈 상태로 숨기지 않도록 수정
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 14)
+- RED: `read-error` 유틸 부재로 unit 실패
+- GREEN: `src/app/todos/read-error.ts` 추가, `/todos/page.tsx`에서 read error를 에러 패널로 노출
+- REFACTOR: provider message를 사용자 친화 문구로 매핑하는 책임을 유틸로 분리
+
+## Verification Result (Slice 14)
+- `bun run test:unit` => 6 files, 26 tests passed
+- `bun run typecheck` => pass
+- `bun run lint` => pass
+
+## Slice 15 (CLI-first Migration Docs)
+- Goal: Supabase migration 문서를 CLI 우선 흐름으로 정렬
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 15)
+- RED: `supabase/README.md`가 SQL Editor 수동 적용을 기본 경로로 안내
+- GREEN: `supabase login -> link -> db push` 흐름을 기본 경로로 수정
+- REFACTOR: SQL Editor는 fallback 경로로 강등하고 drift warning을 명시
+
+## Hardening (Review Fix Cycle)
+- Failure path tested:
+  - todo smoke가 실제 verify 경로에서 실행되는지 확인
+  - `/todos` read 실패를 provider message 기준으로 에러 패널로 노출하는지 확인
+- Observability signals checked:
+  - todo smoke 회귀가 `verify`에서 직접 검출됨
+  - read error가 empty state 대신 명시적 메시지로 표출됨
+- UX resilience checked:
+  - 수정 다이얼로그 제출 flaky 제거
+  - read failure 시 사용자가 원인 방향을 파악 가능
+
+## Review (Review Fix Cycle)
+- Findings addressed:
+  - todo smoke 미포함 문제 해결
+  - `/todos` read failure 은닉 문제 해결
+  - migration 문서 drift 위험 완화
+
+## Refactor Pass (Review Fix Cycle)
+- Refactor changes:
+  - read failure mapping 유틸 분리
+  - e2e 수정 다이얼로그 제출 경로 안정화
+  - migration 문서에서 기본/예외 경로 구분
+
+## Final Verify (Review Fix Cycle)
+- `bun run verify` => pass
+  - typecheck: pass
+  - lint: pass
+  - test:unit: pass (26)
+  - test:e2e:smoke: pass (4)
