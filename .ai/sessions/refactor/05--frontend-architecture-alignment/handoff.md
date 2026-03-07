@@ -20,12 +20,14 @@
 - Slice 11 completed: todo mutation persistence moved into `src/features/todos/repositories/todo-repository.ts` and the service layer now keeps validation/auth/use-case orchestration only.
 - Slice 12 completed: cycle 4 full verify passed and branch 05 is structurally closed.
 - Cycle 5 planning reopened: current target is to collapse todo wrapper layers, move UI mutation orchestration into feature hooks, and remove the repository layer if it stays low-value.
+- Slice 13 completed: scaffold policy now allows direct Server Actions and defines feature-local UI mutation hook responsibilities.
+- Slice 14 completed: todo mutation wrappers and repository indirection were removed, and todo components now delegate mutation orchestration to feature hooks.
 
 ## Next Actions
 
-1. Execute Slice 13 by updating scaffold policy for direct Server Actions and feature-local UI mutation hooks.
-2. Execute Slice 14 by removing todo wrapper layers, extracting todo mutation hooks, and simplifying the mutation path.
-3. After cycle 5 closes, branch 06 can align docs with the new action/hook structure.
+1. Execute Slice 15 with full `bun run verify` and close cycle 5.
+2. Keep branch 06 docs work aligned to the direct-action plus feature-hook structure, not the older service/repository layout.
+3. Treat auth mutation cleanup as a separate follow-up unless a new review explicitly expands scope.
 
 ## Risks
 

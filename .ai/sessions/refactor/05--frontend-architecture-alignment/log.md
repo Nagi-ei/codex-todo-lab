@@ -386,3 +386,28 @@
 ## Verification Result (Slice 13)
 
 - `rg -n "forwarding-only|UI Mutation Hook Policy|router.refresh|useMutation" SCAFFOLD_STRUCTURE.md` => pass
+
+## Slice 14 (Todo Direct Actions And UI Hooks)
+
+- Goal: todo mutation path를 direct Server Action + UI mutation hook 구조로 재정렬한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - action file imports만 봐도 server write path가 읽혀야 한다.
+  - hook file imports만 봐도 UI mutation orchestration이 읽혀야 한다.
+  - todo component는 rendering과 local UI state만 남겨야 한다.
+- Verify:
+  - `rg -n "todo-mutations|todo-repository" src tests`
+  - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 14)
+
+- RED: todo action files는 `todo-mutations.ts`를 호출하는 forwarding-only wrapper였고, todo components는 `useMutation`, toast, `router.refresh()`를 직접 들고 있었다.
+- GREEN: create/update/toggle/delete logic을 각 Server Action file로 이동하고, `src/features/todos/hooks/*`에 create/update/toggle/delete mutation hook을 추가해 component의 mutation orchestration을 제거했다.
+- REFACTOR: `src/features/todos/services/todo-mutations.ts`와 `src/features/todos/repositories/todo-repository.ts`를 삭제하고, action-context/action-result helper만 남겨 shared server helper 역할을 명확히 했다.
+
+## Verification Result (Slice 14)
+
+- `rg -n "todo-mutations|todo-repository" src tests` => no matches
+- `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
+- `bun run typecheck` => pass
