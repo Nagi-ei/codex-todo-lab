@@ -11,7 +11,7 @@ PRD와 Master Plan을 실행 가능한 브랜치 단위로 분해하고, 각 브
 
 ## UI Branching Strategy
 1. 기본 원칙: 기능(Auth/Todo 도메인)과 강하게 결합된 UI는 같은 브랜치에서 함께 구현한다.
-2. 현재 프로젝트 적용: 기능 + UI는 `02` 브랜치에서 함께 구현하고, 후속 브랜치는 운영 검증/문서 정리에 집중한다.
+2. 현재 프로젝트 적용: 기능 + UI는 `02` 브랜치에서 함께 구현하고, 후속 브랜치는 운영 검증, 구조 리팩토링, 문서 정리로 책임을 분리한다.
 3. UI를 별도 브랜치로 분리하는 경우:
 - 디자인 시스템 개편처럼 범위가 넓고 독립 검토가 필요할 때
 - 기능 개발과 UI 개발을 병렬로 진행해야 할 때
@@ -93,14 +93,31 @@ PRD와 Master Plan을 실행 가능한 브랜치 단위로 분해하고, 각 브
 5. Status
 - 별도 브랜치 보류: 최소 테스트 체계와 smoke gate는 `02` 브랜치에서 이미 구현/검증되었으므로 독립 브랜치로 진행하지 않는다.
 
-### 5) `refactor/05--docs-and-learning-notes`
+### 5) `refactor/05--frontend-architecture-alignment`
 1. Goal
-- 문서 정리 및 학습 회고 체계 완성
+- 프론트엔드 코드 및 파일 구조를 아키텍처 규칙에 맞게 정렬한다.
+2. Scope
+- `SCAFFOLD_STRUCTURE.md`와 `frontend-architecture-rules` 기준으로 파일 책임 재배치
+- 비즈니스 로직, 서버 호출, UI 상태가 섞인 영역 분리
+- 큰 파일을 프레젠테이션/액션/유틸 단위로 정리
+3. Done Criteria
+- 주요 기능 변경 없이 파일 책임이 바로 읽힌다
+- 컴포넌트/서버 액션/도메인 로직 경계가 일관되다
+4. Verification
+- `bun run lint`
+- `bun run typecheck`
+- 핵심 Todo/Auth 플로우 수동 회귀 점검
+
+### 6) `refactor/06--docs-and-learning-notes`
+1. Goal
+- 리팩토링 이후 기준선에 맞춰 운영 문서와 학습 회고를 정리한다.
 2. Scope
 - README 실행/검증 절차 최신화
 - `.ai` 운영 문서와 docs 정합성 맞춤
+- 구조 리팩토링 결과를 반영한 재진입 문서 정리
 3. Done Criteria
 - 새 세션이 문서만 읽고 재진입 가능
+- 코드 구조와 문서 설명 사이에 불일치가 없다
 4. Verification
 - 문서 경로/명령 재현성 점검
 
