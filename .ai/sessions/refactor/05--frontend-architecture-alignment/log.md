@@ -222,3 +222,27 @@
 ## Verification Result (Slice 7)
 
 - `rg -n "actions|Server Action Policy|route entry" SCAFFOLD_STRUCTURE.md` => pass
+
+## Slice 8 (Todo Action Layer Relocation)
+
+- Goal: todo mutation action entry를 feature-local action layer로 이동하고 naming을 역할 기준으로 정리한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `use server` boundary는 `src/features/todos/actions/*`에 둔다.
+  - action entry는 auth/validation/use-case entry만 담당한다.
+  - persistence-oriented orchestration은 service 레이어에 남기되 이름이 mutation responsibility를 드러내야 한다.
+- Verify:
+  - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 8)
+
+- RED: `src/app/todos/actions.ts`는 forwarding-only wrapper였고, current policy와 달리 route 폴더에 mutation entry를 두고 있었다.
+- GREEN: todo action entry를 `src/features/todos/actions/*`로 옮기고, service file은 `todo-mutations.ts`로 rename하면서 exported function 이름도 mutation orchestration 의미에 맞게 정리했다.
+- REFACTOR: component/test/page import를 feature-local action files로 직접 연결해 route-level wrapper를 제거했다.
+
+## Verification Result (Slice 8)
+
+- `rg -n "app/todos/actions|services/todo-actions" src tests` => no matches
+- `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
+- `bun run typecheck` => pass

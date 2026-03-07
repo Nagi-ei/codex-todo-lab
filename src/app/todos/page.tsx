@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 
-import { logoutAction } from "@/app/todos/actions";
 import { TodoCreateForm } from "@/components/todos/todo-create-form";
 import { TodoFilterTabs } from "@/components/todos/todo-filter-tabs";
 import { TodoList } from "@/components/todos/todo-list";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { logoutAction } from "@/features/todos/actions/logout";
 import { parseTodoFilter } from "@/features/todos/presentation/filter";
 import { readTodosForPage } from "@/features/todos/services/todo-read";
 import type { TodoFilter } from "@/features/todos/types/todo";

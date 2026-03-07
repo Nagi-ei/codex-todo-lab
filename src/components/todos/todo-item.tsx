@@ -4,10 +4,11 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { deleteTodoAction, toggleTodoAction } from "@/app/todos/actions";
 import { TodoEditDialog } from "@/components/todos/todo-edit-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { deleteTodoAction } from "@/features/todos/actions/delete-todo";
+import { toggleTodoAction } from "@/features/todos/actions/toggle-todo";
 import {
   getTodoActionDebugLabel,
   getTodoActionErrorMessage,

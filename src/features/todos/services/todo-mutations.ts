@@ -6,7 +6,9 @@ import type { CreateTodoInput, TodoRow, UpdateTodoInput } from "@/features/todos
 import { getTodoActionContext } from "./action-context";
 import { createRequestId, toErrorResult, toTitleFieldErrorKeys } from "./action-result";
 
-export async function createTodo(input: CreateTodoInput): Promise<TodoActionResult> {
+export async function createTodoMutation(
+  input: CreateTodoInput,
+): Promise<TodoActionResult> {
   const requestId = createRequestId();
   const parsed = createTodoSchema.safeParse(input);
 
@@ -67,7 +69,7 @@ export async function createTodo(input: CreateTodoInput): Promise<TodoActionResu
   };
 }
 
-export async function updateTodo(
+export async function updateTodoMutation(
   id: string,
   input: UpdateTodoInput,
 ): Promise<TodoActionResult> {
@@ -150,7 +152,7 @@ export async function updateTodo(
   };
 }
 
-export async function toggleTodo(id: string): Promise<TodoActionResult> {
+export async function toggleTodoMutation(id: string): Promise<TodoActionResult> {
   const requestId = createRequestId();
   const { supabase, userId } = await getTodoActionContext();
 
@@ -228,7 +230,7 @@ export async function toggleTodo(id: string): Promise<TodoActionResult> {
   };
 }
 
-export async function deleteTodo(id: string): Promise<TodoActionResult> {
+export async function deleteTodoMutation(id: string): Promise<TodoActionResult> {
   const requestId = createRequestId();
   const { supabase, userId } = await getTodoActionContext();
 

@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { createTodoAction } from "@/app/todos/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createTodoAction } from "@/features/todos/actions/create-todo";
 import {
   getTodoActionDebugLabel,
   getTodoActionErrorMessage,
