@@ -384,3 +384,76 @@
 - FIX: 잔존 `next dev` 프로세스 종료
 - 2차 `bun run verify` 통과:
   - typecheck/lint/test:unit/test:e2e:smoke pass
+
+## Slice 13 (Smoke Gate Inclusion)
+- Goal: todo CRUD/filter 플로우를 실제 smoke gate에 포함
+- Verify:
+  - `bun run test:e2e:smoke`
+
+## TDD Cycle (Slice 13)
+- RED: `tests/e2e/todos.smoke.spec.ts`에 `@smoke` 태그가 없어 verify 경로에서 실행되지 않음
+- GREEN: todo smoke 테스트에 `@smoke` 태그를 추가해 gate에 포함
+- REFACTOR: 수정 다이얼로그 제출을 `Enter` 기반으로 바꿔 flaky 클릭 문제를 제거
+
+## Fix Log (Slice 13)
+- 이슈: smoke gate 첫 실행이 `.next/dev/lock`으로 실패
+- 원인: 잔존 `next dev` 프로세스가 lock 보유
+- 수정: 프로세스 정리 후 재실행
+- 재검증: `bun run test:e2e:smoke` 통과 (auth 3 + todo 1)
+
+## Slice 14 (Todo Read Failure Surface)
+- Goal: `/todos` read 실패를 빈 상태로 숨기지 않도록 수정
+- Verify:
+  - `bun run test:unit`
+  - `bun run typecheck`
+  - `bun run lint`
+
+## TDD Cycle (Slice 14)
+- RED: `read-error` 유틸 부재로 unit 실패
+- GREEN: `src/app/todos/read-error.ts` 추가, `/todos/page.tsx`에서 read error를 에러 패널로 노출
+- REFACTOR: provider message를 사용자 친화 문구로 매핑하는 책임을 유틸로 분리
+
+## Verification Result (Slice 14)
+- `bun run test:unit` => 6 files, 26 tests passed
+- `bun run typecheck` => pass
+- `bun run lint` => pass
+
+## Slice 15 (CLI-first Migration Docs)
+- Goal: Supabase migration 문서를 CLI 우선 흐름으로 정렬
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 15)
+- RED: `supabase/README.md`가 SQL Editor 수동 적용을 기본 경로로 안내
+- GREEN: `supabase login -> link -> db push` 흐름을 기본 경로로 수정
+- REFACTOR: SQL Editor는 fallback 경로로 강등하고 drift warning을 명시
+
+## Hardening (Review Fix Cycle)
+- Failure path tested:
+  - todo smoke가 실제 verify 경로에서 실행되는지 확인
+  - `/todos` read 실패를 provider message 기준으로 에러 패널로 노출하는지 확인
+- Observability signals checked:
+  - todo smoke 회귀가 `verify`에서 직접 검출됨
+  - read error가 empty state 대신 명시적 메시지로 표출됨
+- UX resilience checked:
+  - 수정 다이얼로그 제출 flaky 제거
+  - read failure 시 사용자가 원인 방향을 파악 가능
+
+## Review (Review Fix Cycle)
+- Findings addressed:
+  - todo smoke 미포함 문제 해결
+  - `/todos` read failure 은닉 문제 해결
+  - migration 문서 drift 위험 완화
+
+## Refactor Pass (Review Fix Cycle)
+- Refactor changes:
+  - read failure mapping 유틸 분리
+  - e2e 수정 다이얼로그 제출 경로 안정화
+  - migration 문서에서 기본/예외 경로 구분
+
+## Final Verify (Review Fix Cycle)
+- `bun run verify` => pass
+  - typecheck: pass
+  - lint: pass
+  - test:unit: pass (26)
+  - test:e2e:smoke: pass (4)

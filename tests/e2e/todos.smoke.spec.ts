@@ -28,7 +28,7 @@ async function ensureAuthenticatedOnTodos(page: Page) {
   await expect(page).toHaveURL(/\/todos$/);
 }
 
-test("todos crud and filter flow", async ({ page }) => {
+test("@smoke todos crud and filter flow", async ({ page }) => {
   await ensureAuthenticatedOnTodos(page);
 
   await page.locator("#todo-create-title").fill("첫 할 일");
@@ -45,9 +45,12 @@ test("todos crud and filter flow", async ({ page }) => {
   await expect(page.getByText("첫 할 일")).toBeVisible();
 
   await page.getByRole("button", { name: "수정" }).click();
-  const dialogInput = page.locator('[id^="todo-edit-title-"]');
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  const dialogInput = dialog.locator('[id^="todo-edit-title-"]');
+  await expect(dialogInput).toBeVisible();
   await dialogInput.fill("수정된 할 일");
-  await page.getByRole("button", { name: "저장" }).click();
+  await dialogInput.press("Enter");
 
   await expect(page.getByText("수정된 할 일")).toBeVisible();
 

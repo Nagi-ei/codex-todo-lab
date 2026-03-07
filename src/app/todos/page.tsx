@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { logoutAction } from "@/app/todos/actions";
 import { parseTodoFilter } from "@/app/todos/filter";
+import { getTodoReadErrorMessage } from "@/app/todos/read-error";
 import type { Todo, TodoFilter } from "@/app/todos/types";
 import { TodoCreateForm } from "@/components/todos/todo-create-form";
 import { TodoFilterTabs } from "@/components/todos/todo-filter-tabs";
@@ -79,8 +80,9 @@ export default async function TodosPage({ searchParams }: TodosPageProps) {
     query = query.eq("is_completed", true);
   }
 
-  const { data } = await query;
+  const { data, error } = await query;
   const todos = ((data ?? []) as TodoRow[]).map(mapTodo);
+  const readErrorMessage = getTodoReadErrorMessage(error?.message ?? null);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl px-4 py-8">
@@ -94,6 +96,11 @@ export default async function TodosPage({ searchParams }: TodosPageProps) {
 
         <TodoCreateForm />
         <TodoFilterTabs activeFilter={activeFilter} />
+        {readErrorMessage ? (
+          <div className="rounded-md border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
+            {readErrorMessage}
+          </div>
+        ) : null}
         <TodoList activeFilter={activeFilter} todos={todos} />
 
         <form action={logoutAction}>
