@@ -7,10 +7,8 @@ import { TodoList } from "@/components/todos/todo-list";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { parseTodoFilter } from "@/features/todos/presentation/filter";
-import { getTodoReadErrorMessage } from "@/features/todos/presentation/read-error";
-import { mapTodo } from "@/features/todos/presentation/todo";
-import type { TodoFilter, TodoRow } from "@/features/todos/types/todo";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { readTodosForPage } from "@/features/todos/services/todo-read";
+import type { TodoFilter } from "@/features/todos/types/todo";
 
 type TodosPageProps = {
   searchParams?: Promise<{ filter?: string }> | { filter?: string };
@@ -37,33 +35,11 @@ async function resolveSearchParams(
 export default async function TodosPage({ searchParams }: TodosPageProps) {
   const resolvedSearchParams = await resolveSearchParams(searchParams);
   const activeFilter = resolveFilter(resolvedSearchParams);
-
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, todos, readErrorMessage } = await readTodosForPage(activeFilter);
 
   if (!user) {
     redirect("/auth");
   }
-
-  let query = supabase
-    .from("todos")
-    .select("id,user_id,title,is_completed,created_at,updated_at")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  if (activeFilter === "active") {
-    query = query.eq("is_completed", false);
-  }
-
-  if (activeFilter === "completed") {
-    query = query.eq("is_completed", true);
-  }
-
-  const { data, error } = await query;
-  const todos = ((data ?? []) as TodoRow[]).map(mapTodo);
-  const readErrorMessage = getTodoReadErrorMessage(error?.message ?? null);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl px-4 py-8">

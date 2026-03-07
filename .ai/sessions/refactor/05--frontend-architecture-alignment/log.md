@@ -141,3 +141,26 @@
 - Replan decision:
   - reopen branch 05 for a second cycle focused only on extracting the todo read path from the route entry.
   - keep all other branch-05 changes closed unless the new extraction exposes a regression.
+
+## Slice 5 (Todo Read Path Extraction)
+
+- Goal: `/todos` route entry에서 todo read orchestration을 제거한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `src/app/todos/page.tsx`는 searchParams 해석, redirect, rendering composition만 담당한다.
+  - Supabase client setup, query construction, row fetching은 `src/features/todos/services`로 이동한다.
+  - 기존 filter/read error/todos smoke 동작은 유지한다.
+- Verify:
+  - `bun run test:e2e:smoke --grep todos`
+  - `bun run typecheck`
+
+## TDD Cycle (Slice 5)
+
+- RED: review finding대로 `src/app/todos/page.tsx`가 Supabase client 생성, query 구성, filter 분기, row fetching을 직접 들고 있었다.
+- GREEN: `readTodosForPage`를 `src/features/todos/services/todo-read.ts`로 추출하고 page는 read result만 소비하도록 변경했다.
+- REFACTOR: read error mapping과 row mapping 재사용을 feature service 안으로 모아 route file import surface를 줄였다.
+
+## Verification Result (Slice 5)
+
+- `bun run test:e2e:smoke --grep todos` => pass (1 test)
+- `bun run typecheck` => pass
