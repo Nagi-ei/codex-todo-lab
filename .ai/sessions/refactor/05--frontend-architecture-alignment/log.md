@@ -104,3 +104,28 @@
 - `rg -n "app/auth/types" src tests` => no matches
 - `bun run test:e2e:smoke --grep auth` => pass (3 tests)
 - `bun run lint` => pass
+
+## Slice 4 (Final Verification And Closure)
+
+- Goal: branch-wide verification을 완료하고 남은 구조 리스크를 명시한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - route entry와 feature/service 경계가 이번 브랜치 범위 내에서 일관된지 다시 확인한다.
+  - 최종 verify 실패 시 가장 이른 관련 slice로 되돌아간다.
+  - 이번 브랜치에서 의도적으로 남긴 read-path 구조 이슈는 follow-up risk로만 기록하고 즉석 확장은 하지 않는다.
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 4)
+
+- RED: full-project verification이 없으면 helper move, action decomposition, auth boundary split이 실제 앱 플로우를 깨뜨리지 않았다는 증거가 부족했다.
+- GREEN: `bun run verify`를 실행해 typecheck, lint, unit, smoke e2e를 한 번에 통과시켰다.
+- REFACTOR: handoff를 현재 상태와 잔여 리스크 중심으로 정리하고, 문서 브랜치에서 다룰 후속 작업과 구조적 잔여 이슈를 분리해 기록했다.
+
+## Verification Result (Slice 4)
+
+- `bun run verify` => pass
+  - `bun run typecheck` => pass
+  - `bun run lint` => pass
+  - `bun run test:unit` => pass (6 files, 26 tests)
+  - `bun run test:e2e:smoke` => pass (4 tests)
