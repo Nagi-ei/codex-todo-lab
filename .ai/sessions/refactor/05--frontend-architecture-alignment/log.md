@@ -80,3 +80,27 @@
 
 - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
 - `bun run typecheck` => pass
+
+## Slice 3 (Auth Feature Boundary)
+
+- Goal: auth type and server helper를 `src/features/auth`로 이동해 route entry를 얇게 유지한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `/auth` route entry는 public action entrypoint로만 남기고 인증 orchestration은 feature service로 이동한다.
+  - auth domain 타입은 route 폴더가 아니라 feature layer에 둔다.
+  - 기존 `/auth` 및 `/auth/check-email` 흐름과 UI 상호작용은 유지한다.
+- Verify:
+  - `bun run test:e2e:smoke --grep auth`
+  - `bun run lint`
+
+## TDD Cycle (Slice 3)
+
+- RED: `src/app/auth/actions.ts`와 `src/app/auth/types.ts`가 auth domain logic과 계약 타입을 route 폴더 안에 유지하고 있어서 scaffold의 route-entry 규칙을 위반하고 있었다.
+- GREEN: auth 타입을 `src/features/auth/types/auth.ts`로 옮기고, 로그인/회원가입 orchestration을 `src/features/auth/services/auth-actions.ts`로 추출한 뒤 route action entry는 thin wrapper로 변경했다.
+- REFACTOR: auth error toast의 타입 참조를 feature 경계로 맞추고 route 폴더의 legacy type file을 제거했다.
+
+## Verification Result (Slice 3)
+
+- `rg -n "app/auth/types" src tests` => no matches
+- `bun run test:e2e:smoke --grep auth` => pass (3 tests)
+- `bun run lint` => pass

@@ -1,4 +1,4 @@
-import type { AuthActionResult } from "@/app/auth/types";
+import type { AuthActionResult } from "@/features/auth/types/auth";
 
 export function buildAuthErrorToastKey(
   state: Extract<AuthActionResult, { ok: false }>,
