@@ -189,3 +189,15 @@
   - `bun run lint` => pass
   - `bun run test:unit` => pass (6 files, 26 tests)
   - `bun run test:e2e:smoke` => pass (4 tests)
+
+## Replan (Cycle 3)
+
+- Date: `2026-03-08`
+- Trigger:
+  - follow-up design discussion found that route-level `actions.ts` wrappers keep `src/app` from being routing-only and blur the difference between Server Action entrypoints and persistence-oriented services.
+- Best-practice summary:
+  - `next-best-practices/data-patterns.md` recommends Server Components for reads and Server Actions for mutations, but does not require Server Actions to live under `app`.
+  - `next-best-practices/file-conventions.md` defines route special files but does not make `actions.ts` a required route convention.
+  - `vercel-react-best-practices/server-auth-actions` reinforces that auth must happen inside each Server Action regardless of file location.
+- Replan decision:
+  - open cycle 3 to formalize feature-local Server Actions in the scaffold, then move todo mutation actions to that structure.

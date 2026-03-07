@@ -11,15 +11,16 @@
 - Cycle 2 planning opened from review finding on todo read orchestration in `src/app/todos/page.tsx`.
 - Slice 5 completed: todo read orchestration moved into `src/features/todos/services/todo-read.ts` and todos smoke plus typecheck passed.
 - Slice 6 completed: cycle 2 full verify passed and branch 05 is ready to hand off to branch 06 docs work.
+- Cycle 3 planning opened to formalize feature-local Server Actions and remove route-level action wrappers.
 
 ## Next Actions
 
-1. Open branch 06 and align README, master/branch docs, and learning notes with the final `src/features/auth` and `src/features/todos` layout.
-2. If this branch is reviewed again, confirm the prior `src/app/todos/page.tsx` finding is now resolved rather than opening a third cycle by default.
-3. Keep `supabase/.temp/` out of subsequent commits unless a future task explicitly needs local CLI state.
+1. Execute Slice 7 by updating `SCAFFOLD_STRUCTURE.md` to define feature-local Server Actions and record the rationale in session docs.
+2. Execute Slice 8 by moving todo mutation action entrypoints out of `src/app/todos` into the feature layer.
+3. After cycle 3 closes, branch 06 can align repository docs with the final structure.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- No active code-level blocker remains from branch 05; remaining follow-up is documentation alignment in branch 06.
+- Remaining branch-05 work is now structural policy and action-layer alignment, not product behavior changes.
