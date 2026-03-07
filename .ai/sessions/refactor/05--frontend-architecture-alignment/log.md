@@ -365,3 +365,24 @@
   - todo Server Actions become the actual mutation implementation boundary.
   - UI mutation orchestration moves into `src/features/todos/hooks/*`.
   - repository/service files are kept only if they still expose a meaningful shared responsibility after the collapse.
+
+## Slice 13 (Direct Server Action Policy Clarification)
+
+- Goal: scaffold policy를 direct Server Action과 UI mutation hook 기준으로 명확히 한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `src/app` route-entry only 원칙은 유지한다.
+  - action과 hook의 책임이 문서상으로 겹치지 않아야 한다.
+  - forwarding-only action wrapper를 기본값으로 밀지 않는다.
+- Verify:
+  - `rg -n "forwarding-only|UI Mutation Hook Policy|router.refresh|useMutation" SCAFFOLD_STRUCTURE.md`
+
+## TDD Cycle (Slice 13)
+
+- RED: 기존 scaffold wording은 action file을 얇은 wrapper로 유지하도록 읽히고, component 내부 `useMutation` orchestration 금지 기준도 문서에 충분히 명시돼 있지 않았다.
+- GREEN: `SCAFFOLD_STRUCTURE.md`를 갱신해 direct Server Action, UI mutation hook policy, component-local mutation anti-pattern을 명시했다.
+- REFACTOR: placement rules, Server Action Policy, review checklist wording을 같은 책임 기준으로 맞췄다.
+
+## Verification Result (Slice 13)
+
+- `rg -n "forwarding-only|UI Mutation Hook Policy|router.refresh|useMutation" SCAFFOLD_STRUCTURE.md` => pass
