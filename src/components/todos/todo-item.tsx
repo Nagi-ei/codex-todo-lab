@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { deleteTodoAction, toggleTodoAction } from "@/app/todos/actions";
-import {
-  getTodoActionDebugLabel,
-  getTodoActionErrorMessage,
-} from "@/app/todos/presentation";
-import type { Todo } from "@/app/todos/types";
 import { TodoEditDialog } from "@/components/todos/todo-edit-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  getTodoActionDebugLabel,
+  getTodoActionErrorMessage,
+} from "@/features/todos/presentation/todo";
+import type { Todo } from "@/features/todos/types/todo";
 
 type TodoItemProps = {
   todo: Todo;

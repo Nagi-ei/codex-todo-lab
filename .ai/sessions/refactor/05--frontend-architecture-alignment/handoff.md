@@ -4,13 +4,13 @@
 
 - Planner stage completed for `refactor/05--frontend-architecture-alignment`.
 - Canonical branch docs were already updated and committed on this branch before the planner artifacts were created.
-- No code refactor slices have started yet.
+- Slice 1 completed: todo helper modules were moved into `src/features/todos` and targeted unit tests passed.
 
 ## Next Actions
 
-1. Execute Slice 1 by creating `src/features/todos` modules for schema, types, and presentation helpers.
-2. Keep `src/app/todos/page.tsx` as a route-entry file only and re-run targeted todo unit tests.
-3. Move to Slice 2 only after Slice 1 verify passes and the log captures the first TDD cycle.
+1. Execute Slice 2 by splitting `src/app/todos/actions.ts` into feature-layer responsibilities while keeping Server Action entrypoints stable.
+2. Reuse the new `src/features/todos/types/todo.ts` and presentation mapper instead of reintroducing route-local helpers.
+3. Run targeted todo action tests and `bun run typecheck` before committing Slice 2.
 
 ## Risks
 

@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
+import type { TodoFilter } from "@/features/todos/types/todo";
 import { cn } from "@/lib/utils";
-import type { TodoFilter } from "@/app/todos/types";
 
 type TodoFilterTabsProps = {
   activeFilter: TodoFilter;

@@ -6,11 +6,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { updateTodoAction } from "@/app/todos/actions";
-import {
-  getTodoActionDebugLabel,
-  getTodoActionErrorMessage,
-} from "@/app/todos/presentation";
-import type { Todo } from "@/app/todos/types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +17,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  getTodoActionDebugLabel,
+  getTodoActionErrorMessage,
+} from "@/features/todos/presentation/todo";
+import type { Todo } from "@/features/todos/types/todo";
 
 type TodoEditDialogProps = {
   todo: Todo;

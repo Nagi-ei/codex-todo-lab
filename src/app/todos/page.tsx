@@ -1,39 +1,20 @@
 import { redirect } from "next/navigation";
 
 import { logoutAction } from "@/app/todos/actions";
-import { parseTodoFilter } from "@/app/todos/filter";
-import { getTodoReadErrorMessage } from "@/app/todos/read-error";
-import type { Todo, TodoFilter } from "@/app/todos/types";
 import { TodoCreateForm } from "@/components/todos/todo-create-form";
 import { TodoFilterTabs } from "@/components/todos/todo-filter-tabs";
 import { TodoList } from "@/components/todos/todo-list";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { parseTodoFilter } from "@/features/todos/presentation/filter";
+import { getTodoReadErrorMessage } from "@/features/todos/presentation/read-error";
+import { mapTodo } from "@/features/todos/presentation/todo";
+import type { TodoFilter, TodoRow } from "@/features/todos/types/todo";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type TodosPageProps = {
   searchParams?: Promise<{ filter?: string }> | { filter?: string };
 };
-
-type TodoRow = {
-  id: string;
-  user_id: string;
-  title: string;
-  is_completed: boolean;
-  created_at: string;
-  updated_at: string;
-};
-
-function mapTodo(row: TodoRow): Todo {
-  return {
-    id: row.id,
-    userId: row.user_id,
-    title: row.title,
-    isCompleted: row.is_completed,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-  };
-}
 
 function resolveFilter(searchParams: { filter?: string } | undefined): TodoFilter {
   return parseTodoFilter(searchParams?.filter);

@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createTodoSchema, updateTodoSchema } from "@/features/todos/schema/todo";
+import type { CreateTodoInput, Todo, TodoRow, UpdateTodoInput } from "@/features/todos/types/todo";
 
 import type {
   TodoActionErrorCode,
@@ -11,17 +13,6 @@ import type {
   TodoActionErrorDetails,
   TodoActionResult,
 } from "./action-types";
-import { createTodoSchema, updateTodoSchema } from "./schema";
-import type { CreateTodoInput, Todo, UpdateTodoInput } from "./types";
-
-type TodoRow = {
-  id: string;
-  user_id: string;
-  title: string;
-  is_completed: boolean;
-  created_at: string;
-  updated_at: string;
-};
 
 function createRequestId(): string {
   return `todo_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;

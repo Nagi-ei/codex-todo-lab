@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   getTodoActionDebugLabel,
   getTodoActionErrorMessage,
-} from "../../../src/app/todos/presentation";
+} from "../../../src/features/todos/presentation/todo";
 
 describe("getTodoActionErrorMessage", () => {
   it("prefers title field error for validation failures", () => {

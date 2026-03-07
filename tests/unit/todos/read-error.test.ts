@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getTodoReadErrorMessage } from "../../../src/app/todos/read-error";
+import { getTodoReadErrorMessage } from "../../../src/features/todos/presentation/read-error";
 
 describe("getTodoReadErrorMessage", () => {
   it("returns null when there is no read error", () => {
