@@ -24,7 +24,7 @@
 1. M1 Bootstrap: Next.js, Tailwind, shadcn/ui 초기화
 2. M2 Auth: Supabase 연동 + 이메일 인증 + 보호 라우트
 3. M3 Todo: Server Actions 기반 CRUD/토글/필터
-4. M4 Quality: E2E/유닛 테스트 및 결함 수정
+4. M4 Quality: 운영 검증(A/B RLS) 및 남은 결함 점검
 5. M5 Docs: 운영 가이드, 학습 노트, handoff 정리
 
 ## Public Interfaces / Types
@@ -66,8 +66,8 @@
 1. `main` (bootstrap baseline 완료, commit `0d399da`)
 2. `feature/01--supabase-auth-and-route-guard`
 3. `feature/02--todo-domain-and-server-actions`
-4. `feature/03--supabase-rls-and-security-hardening`
-5. `fix/04--test-harness-and-core-scenarios`
+4. `feature/03--supabase-rls-and-security-hardening` (운영 검증 전용으로 축소)
+5. `fix/04--test-harness-and-core-scenarios` (별도 진행 보류, `02`에 흡수)
 6. `refactor/05--docs-and-learning-notes`
 
 ## Global Risks
@@ -79,3 +79,5 @@
 - 2026-02-20: API Route Handler 대신 Server Actions 사용
 - 2026-02-20: In Scope만 구현, Out Scope는 제외
 - 2026-02-20: 브랜치명과 세션명을 동일하게 관리
+- 2026-03-08: `feature/03--supabase-rls-and-security-hardening`를 운영 검증 브랜치로 축소
+- 2026-03-08: 최소 테스트 체계는 `feature/02--todo-domain-and-server-actions`에 흡수되었으므로 `fix/04--test-harness-and-core-scenarios`는 별도 진행 보류
