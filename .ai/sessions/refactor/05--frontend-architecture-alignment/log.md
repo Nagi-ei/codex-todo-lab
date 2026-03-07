@@ -201,3 +201,24 @@
   - `vercel-react-best-practices/server-auth-actions` reinforces that auth must happen inside each Server Action regardless of file location.
 - Replan decision:
   - open cycle 3 to formalize feature-local Server Actions in the scaffold, then move todo mutation actions to that structure.
+
+## Slice 7 (Feature-Local Server Action Policy)
+
+- Goal: Server Action 배치 정책을 repository scaffold에 명시한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - `src/app`는 route entry only를 유지한다.
+  - Server Action은 feature 경계 안에 두되, action file과 service file 책임을 분리한다.
+  - 정책 근거는 Next.js/Vercel guidance와 충돌하지 않아야 한다.
+- Verify:
+  - `rg -n "actions|Server Action Policy|route entry" SCAFFOLD_STRUCTURE.md`
+
+## TDD Cycle (Slice 7)
+
+- RED: current scaffold가 route-level `actions.ts`를 허용하고 있어서 `app`을 라우팅 전용으로 유지하려는 목표와 충돌했다.
+- GREEN: `SCAFFOLD_STRUCTURE.md`를 갱신해 feature-local `actions/` layer, route-entry only `app`, action-vs-service 책임 분리를 명시했다.
+- REFACTOR: placement rules, decision order, review checklist의 wording을 같은 정책 용어로 정렬했다.
+
+## Verification Result (Slice 7)
+
+- `rg -n "actions|Server Action Policy|route entry" SCAFFOLD_STRUCTURE.md` => pass
