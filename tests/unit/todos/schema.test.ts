@@ -4,7 +4,7 @@ import {
   createTodoSchema,
   todoTitleSchema,
   updateTodoSchema,
-} from "../../../src/app/todos/schema";
+} from "../../../src/features/todos/schema/todo";
 
 describe("todoTitleSchema", () => {
   it("accepts a trimmed non-empty title within 200 chars", () => {

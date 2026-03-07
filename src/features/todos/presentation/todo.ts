@@ -1,4 +1,5 @@
-import type { TodoActionResult } from "./action-types";
+import type { TodoActionResult } from "@/features/todos/types/todo-action";
+import type { Todo, TodoRow } from "@/features/todos/types/todo";
 
 const TODO_MESSAGE_KEY_MAP = {
   "todo.validation_failed": "입력값을 확인해 주세요.",
@@ -16,6 +17,17 @@ const TODO_TITLE_FIELD_ERROR_MAP = {
   title_too_long: "제목은 200자 이하여야 합니다.",
   title_invalid: "제목을 확인해 주세요.",
 } as const;
+
+export function mapTodo(row: TodoRow): Todo {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    title: row.title,
+    isCompleted: row.is_completed,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
 
 export function getTodoActionErrorMessage(result: Extract<TodoActionResult, { ok: false }>): string {
   if (result.code === "validation_failed") {

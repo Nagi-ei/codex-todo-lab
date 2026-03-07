@@ -1,16 +1,11 @@
-"use server";
-
 import type { AuthError } from "@supabase/supabase-js";
 
+import type { AuthActionResult, AuthCredentials } from "@/features/auth/types/auth";
 import {
   createSupabaseAdminClient,
   shouldAutoConfirmEmails,
 } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type {
-  AuthActionResult,
-  AuthCredentials,
-} from "@/app/auth/types";
 
 function normalizeCredentials(input: AuthCredentials): AuthCredentials {
   return {
@@ -29,7 +24,73 @@ function toMissingCredentialsError(): AuthActionResult {
   };
 }
 
-export async function loginMutationAction(
+function toLoginErrorResult(error: AuthError): AuthActionResult {
+  const message = error.message.toLowerCase();
+  const isEmailNotConfirmed = message.includes("email not confirmed");
+
+  if (isEmailNotConfirmed) {
+    return {
+      ok: false,
+      code: "email_not_confirmed",
+      message: "이메일 확인 후 로그인해 주세요.",
+      debug_reason: error.message,
+      response_status: getResponseStatus(error),
+    };
+  }
+
+  return {
+    ok: false,
+    code: "invalid_credentials",
+    message: "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.",
+    debug_reason: error.message,
+    response_status: getResponseStatus(error),
+  };
+}
+
+function toSignupErrorResult(
+  error: AuthError,
+  source: "admin_create" | "public_signup",
+): AuthActionResult {
+  const message = error.message.toLowerCase();
+
+  if (message.includes("already registered") || message.includes("already exists")) {
+    return {
+      ok: false,
+      code: "signup_failed",
+      message: "이미 가입된 이메일입니다. 로그인해 주세요.",
+      debug_reason: `${source}: ${error.message}`,
+      response_status: getResponseStatus(error),
+    };
+  }
+
+  if (message.includes("rate limit")) {
+    return {
+      ok: false,
+      code: "signup_failed",
+      message: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
+      debug_reason: `${source}: ${error.message}`,
+      response_status: getResponseStatus(error),
+    };
+  }
+
+  return {
+    ok: false,
+    code: "signup_failed",
+    message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+    debug_reason: `${source}: ${error.message}`,
+    response_status: getResponseStatus(error),
+  };
+}
+
+function getResponseStatus(error: AuthError): number | null {
+  if ("status" in error && typeof error.status === "number") {
+    return error.status;
+  }
+
+  return null;
+}
+
+export async function loginWithEmail(
   input: AuthCredentials,
 ): Promise<AuthActionResult> {
   const { email, password } = normalizeCredentials(input);
@@ -52,7 +113,7 @@ export async function loginMutationAction(
   };
 }
 
-export async function signupMutationAction(
+export async function signupWithEmail(
   input: AuthCredentials,
 ): Promise<AuthActionResult> {
   const { email, password } = normalizeCredentials(input);
@@ -139,70 +200,4 @@ export async function signupMutationAction(
     code: "ok",
     next: "/todos",
   };
-}
-
-function toLoginErrorResult(error: AuthError): AuthActionResult {
-  const message = error.message.toLowerCase();
-  const isEmailNotConfirmed = message.includes("email not confirmed");
-
-  if (isEmailNotConfirmed) {
-    return {
-      ok: false,
-      code: "email_not_confirmed",
-      message: "이메일 확인 후 로그인해 주세요.",
-      debug_reason: error.message,
-      response_status: getResponseStatus(error),
-    };
-  }
-
-  return {
-    ok: false,
-    code: "invalid_credentials",
-    message: "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.",
-    debug_reason: error.message,
-    response_status: getResponseStatus(error),
-  };
-}
-
-function toSignupErrorResult(
-  error: AuthError,
-  source: "admin_create" | "public_signup",
-): AuthActionResult {
-  const message = error.message.toLowerCase();
-
-  if (message.includes("already registered") || message.includes("already exists")) {
-    return {
-      ok: false,
-      code: "signup_failed",
-      message: "이미 가입된 이메일입니다. 로그인해 주세요.",
-      debug_reason: `${source}: ${error.message}`,
-      response_status: getResponseStatus(error),
-    };
-  }
-
-  if (message.includes("rate limit")) {
-    return {
-      ok: false,
-      code: "signup_failed",
-      message: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
-      debug_reason: `${source}: ${error.message}`,
-      response_status: getResponseStatus(error),
-    };
-  }
-
-  return {
-    ok: false,
-    code: "signup_failed",
-    message: "회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-    debug_reason: `${source}: ${error.message}`,
-    response_status: getResponseStatus(error),
-  };
-}
-
-function getResponseStatus(error: AuthError): number | null {
-  if ("status" in error && typeof error.status === "number") {
-    return error.status;
-  }
-
-  return null;
 }

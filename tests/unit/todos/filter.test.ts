@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseTodoFilter } from "../../../src/app/todos/filter";
+import { parseTodoFilter } from "../../../src/features/todos/presentation/filter";
 
 describe("parseTodoFilter", () => {
   it("returns all when input is undefined", () => {

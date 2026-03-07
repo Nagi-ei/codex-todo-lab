@@ -1,4 +1,4 @@
-import type { TodoFilter } from "./types";
+import type { TodoFilter } from "@/features/todos/types/todo";
 
 const TODO_FILTERS: ReadonlyArray<TodoFilter> = ["all", "active", "completed"];
 

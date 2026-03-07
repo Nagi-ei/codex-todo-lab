@@ -1,4 +1,4 @@
-import type { Todo } from "./types";
+import type { Todo } from "@/features/todos/types/todo";
 
 export type TodoActionErrorCode =
   | "validation_failed"

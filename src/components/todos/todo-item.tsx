@@ -1,61 +1,20 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-
-import { deleteTodoAction, toggleTodoAction } from "@/app/todos/actions";
-import {
-  getTodoActionDebugLabel,
-  getTodoActionErrorMessage,
-} from "@/app/todos/presentation";
-import type { Todo } from "@/app/todos/types";
 import { TodoEditDialog } from "@/components/todos/todo-edit-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useDeleteTodoMutation } from "@/features/todos/hooks/use-delete-todo-mutation";
+import { useToggleTodoMutation } from "@/features/todos/hooks/use-toggle-todo-mutation";
+import type { Todo } from "@/features/todos/types/todo";
 
 type TodoItemProps = {
   todo: Todo;
 };
 
 export function TodoItem({ todo }: TodoItemProps) {
-  const router = useRouter();
-
-  const toggleMutation = useMutation({
-    mutationFn: () => toggleTodoAction(todo.id),
-    onSuccess: (result) => {
-      if (!result.ok) {
-        toast.error(
-          `${getTodoActionErrorMessage(result)} (${getTodoActionDebugLabel(result)})`,
-        );
-        if (process.env.NODE_ENV !== "production") {
-          console.error("[todo][toggle]", result);
-        }
-        return;
-      }
-
-      router.refresh();
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: () => deleteTodoAction(todo.id),
-    onSuccess: (result) => {
-      if (!result.ok) {
-        toast.error(
-          `${getTodoActionErrorMessage(result)} (${getTodoActionDebugLabel(result)})`,
-        );
-        if (process.env.NODE_ENV !== "production") {
-          console.error("[todo][delete]", result);
-        }
-        return;
-      }
-
-      router.refresh();
-    },
-  });
-
-  const isBusy = toggleMutation.isPending || deleteMutation.isPending;
+  const { isPending: isTogglePending, toggleTodo } = useToggleTodoMutation(todo.id);
+  const { deleteTodo, isPending: isDeletePending } = useDeleteTodoMutation(todo.id);
+  const isBusy = isTogglePending || isDeletePending;
 
   return (
     <li className="flex items-center justify-between rounded-md border p-3">
@@ -65,7 +24,7 @@ export function TodoItem({ todo }: TodoItemProps) {
           checked={todo.isCompleted}
           disabled={isBusy}
           onCheckedChange={() => {
-            void toggleMutation.mutateAsync();
+            void toggleTodo();
           }}
         />
         <span className={todo.isCompleted ? "line-through text-muted-foreground" : ""}>
@@ -78,7 +37,7 @@ export function TodoItem({ todo }: TodoItemProps) {
         <Button
           disabled={isBusy}
           onClick={() => {
-            void deleteMutation.mutateAsync();
+            void deleteTodo();
           }}
           size="sm"
           type="button"

@@ -1,46 +1,22 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
-import { createTodoAction } from "@/app/todos/actions";
-import {
-  getTodoActionDebugLabel,
-  getTodoActionErrorMessage,
-} from "@/app/todos/presentation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useCreateTodoMutation } from "@/features/todos/hooks/use-create-todo-mutation";
 
 export function TodoCreateForm() {
-  const router = useRouter();
   const [title, setTitle] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const mutation = useMutation({
-    mutationFn: createTodoAction,
-    onSuccess: (result) => {
-      if (!result.ok) {
-        const message = getTodoActionErrorMessage(result);
-        const debugLabel = getTodoActionDebugLabel(result);
-        setErrorMessage(message);
-        toast.error(`${message} (${debugLabel})`);
-        if (process.env.NODE_ENV !== "production") {
-          console.error("[todo][create]", result);
-        }
-        return;
-      }
-
+  const { createTodo, clearErrorMessage, errorMessage, isPending } = useCreateTodoMutation({
+    onSuccess: () => {
       setTitle("");
-      setErrorMessage(null);
-      router.refresh();
     },
   });
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    await mutation.mutateAsync({ title });
+    await createTodo({ title });
   }
 
   return (
@@ -52,12 +28,15 @@ export function TodoCreateForm() {
         <Input
           id="todo-create-title"
           name="title"
-          onChange={(event) => setTitle(event.currentTarget.value)}
+          onChange={(event) => {
+            setTitle(event.currentTarget.value);
+            clearErrorMessage();
+          }}
           placeholder="할 일을 입력하세요"
           value={title}
         />
-        <Button disabled={mutation.isPending} type="submit">
-          {mutation.isPending ? "추가 중..." : "추가"}
+        <Button disabled={isPending} type="submit">
+          {isPending ? "추가 중..." : "추가"}
         </Button>
       </div>
       {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}

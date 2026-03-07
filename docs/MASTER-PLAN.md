@@ -18,14 +18,15 @@
 4. shadcn/ui + Tailwind UI
 5. Supabase RLS 기반 데이터 격리
 6. Playwright E2E(핵심 플로우) + Vitest 최소 유닛
-7. README + 학습 노트 문서화
+7. 프론트엔드 구조 리팩토링 및 README + 학습 노트 문서화
 
 ## Milestones
 1. M1 Bootstrap: Next.js, Tailwind, shadcn/ui 초기화
 2. M2 Auth: Supabase 연동 + 이메일 인증 + 보호 라우트
 3. M3 Todo: Server Actions 기반 CRUD/토글/필터
 4. M4 Quality: 운영 검증(A/B RLS) 및 남은 결함 점검
-5. M5 Docs: 운영 가이드, 학습 노트, handoff 정리
+5. M5 Refactor: 프론트엔드 구조 정렬 및 책임 분리
+6. M6 Docs: 운영 가이드, 학습 노트, handoff 정리
 
 ## Public Interfaces / Types
 1. Types
@@ -68,7 +69,8 @@
 3. `feature/02--todo-domain-and-server-actions`
 4. `feature/03--supabase-rls-and-security-hardening` (운영 검증 전용으로 축소)
 5. `fix/04--test-harness-and-core-scenarios` (별도 진행 보류, `02`에 흡수)
-6. `refactor/05--docs-and-learning-notes`
+6. `refactor/05--frontend-architecture-alignment`
+7. `refactor/06--docs-and-learning-notes`
 
 ## Global Risks
 1. Supabase 환경변수 누락 또는 키 오용
@@ -81,3 +83,4 @@
 - 2026-02-20: 브랜치명과 세션명을 동일하게 관리
 - 2026-03-08: `feature/03--supabase-rls-and-security-hardening`를 운영 검증 브랜치로 축소
 - 2026-03-08: 최소 테스트 체계는 `feature/02--todo-domain-and-server-actions`에 흡수되었으므로 `fix/04--test-harness-and-core-scenarios`는 별도 진행 보류
+- 2026-03-08: `05` 브랜치는 코드/구조 리팩토링 전용으로 재정의하고, 문서 정리는 `06` 브랜치로 분리

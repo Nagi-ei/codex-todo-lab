@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createTodoAction, updateTodoAction } from "../../../src/app/todos/actions";
+import { createTodoAction } from "../../../src/features/todos/actions/create-todo";
+import { updateTodoAction } from "../../../src/features/todos/actions/update-todo";
 
 const { mockCreateSupabaseServerClient } = vi.hoisted(() => ({
   mockCreateSupabaseServerClient: vi.fn(),

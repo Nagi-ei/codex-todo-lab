@@ -1,5 +1,5 @@
-import type { TodoFilter, Todo } from "@/app/todos/types";
 import { TodoItem } from "@/components/todos/todo-item";
+import type { TodoFilter, Todo } from "@/features/todos/types/todo";
 
 type TodoListProps = {
   todos: Todo[];
