@@ -271,3 +271,13 @@
   - `bun run lint` => pass
   - `bun run test:unit` => pass (6 files, 26 tests)
   - `bun run test:e2e:smoke` => pass (4 tests)
+
+## Replan (Cycle 4)
+
+- Date: `2026-03-08`
+- Trigger:
+  - follow-up structure review found three unresolved issues after cycle 3: todo action types still live in `src/app`, logout is owned by the wrong feature, and todo mutation services still mix use-case orchestration with direct persistence.
+- Context correction:
+  - the earlier `src/app/todos/page.tsx` review finding was already resolved in cycle 2 and is not the reason cycle 4 is opening.
+- Replan decision:
+  - open cycle 4 to finish the action-boundary work by relocating shared contracts, fixing auth ownership, and deepening the mutation separation into `action -> service -> repository`.

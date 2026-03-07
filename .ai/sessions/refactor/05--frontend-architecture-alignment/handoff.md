@@ -15,15 +15,16 @@
 - Slice 7 completed: scaffold now defines feature-local Server Actions and route-entry only `app`.
 - Slice 8 completed: todo mutation action entrypoints moved into `src/features/todos/actions/*` and targeted action tests plus typecheck passed.
 - Slice 9 completed: cycle 3 full verify passed and branch 05 final structure is ready for docs alignment.
+- Cycle 4 planning opened to finish the remaining action-boundary issues: action contract placement, auth/logout ownership, and deeper todo mutation separation.
 
 ## Next Actions
 
-1. Open branch 06 and align README, master/branch docs, and learning notes with the final feature-local action structure.
-2. If future cleanup is needed, consider whether auth actions should also move to `src/features/auth/actions/*` for full structural parity.
-3. Keep `supabase/.temp/` out of later commits unless a future task explicitly needs local CLI state.
+1. Execute Slice 10 by moving todo action contracts out of `src/app` and relocating auth/logout action ownership into the auth feature.
+2. Execute Slice 11 by separating todo mutation use-case orchestration from persistence details.
+3. After cycle 4 closes, branch 06 can align repository docs with the actual final structure.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- No active code-level blocker remains in branch 05; the next work is documentation alignment in branch 06.
+- Remaining branch-05 work is now limited to the unresolved action-boundary issues opened in cycle 4.
