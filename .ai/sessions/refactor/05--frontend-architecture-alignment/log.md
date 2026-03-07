@@ -411,3 +411,28 @@
 - `rg -n "todo-mutations|todo-repository" src tests` => no matches
 - `bun run test:unit -- tests/unit/todos/actions-create-update.test.ts tests/unit/todos/actions-toggle-delete.test.ts` => pass (2 files, 11 tests)
 - `bun run typecheck` => pass
+
+## Slice 15 (Cycle 5 Final Verification)
+
+- Goal: cycle 5 closure와 branch-wide verification을 완료한다.
+- Binding skill lens: `frontend-architecture-rules`
+- Lens check:
+  - direct Server Action과 UI mutation hook 경계가 실제 앱 동작에서도 유지돼야 한다.
+  - full verify는 cycle 5의 direct-action 구조 전체를 다시 통과해야 한다.
+  - branch 06은 이 구조를 기준으로 문서를 정렬해야 한다.
+- Verify:
+  - `bun run verify`
+
+## TDD Cycle (Slice 15)
+
+- RED: slice 13~14 변경 후 branch-wide verification이 없으면 direct-action과 feature-hook 구조가 auth/todos 전체 플로우에서 안전한지 닫을 수 없었다.
+- GREEN: `bun run verify`를 다시 실행해 typecheck, lint, unit, smoke e2e를 모두 통과시켰다.
+- REFACTOR: handoff를 cycle 5 완료 상태 기준으로 정리하고 branch 06이 따라야 할 canonical structure를 direct-action plus feature-hook으로 갱신했다.
+
+## Verification Result (Slice 15)
+
+- `bun run verify` => pass
+  - `bun run typecheck` => pass
+  - `bun run lint` => pass
+  - `bun run test:unit` => pass (6 files, 26 tests)
+  - `bun run test:e2e:smoke` => pass (4 tests)

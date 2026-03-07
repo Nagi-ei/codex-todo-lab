@@ -22,15 +22,16 @@
 - Cycle 5 planning reopened: current target is to collapse todo wrapper layers, move UI mutation orchestration into feature hooks, and remove the repository layer if it stays low-value.
 - Slice 13 completed: scaffold policy now allows direct Server Actions and defines feature-local UI mutation hook responsibilities.
 - Slice 14 completed: todo mutation wrappers and repository indirection were removed, and todo components now delegate mutation orchestration to feature hooks.
+- Slice 15 completed: cycle 5 full verify passed and branch 05 is closed again with direct-action plus feature-hook structure.
 
 ## Next Actions
 
-1. Execute Slice 15 with full `bun run verify` and close cycle 5.
-2. Keep branch 06 docs work aligned to the direct-action plus feature-hook structure, not the older service/repository layout.
-3. Treat auth mutation cleanup as a separate follow-up unless a new review explicitly expands scope.
+1. Open branch 06 and align docs to the direct-action plus feature-hook structure now present in branch 05.
+2. Treat auth mutation cleanup or auth hook parity as a separate follow-up unless a new review explicitly expands scope.
+3. Keep `src/app` route-entry only and do not reintroduce route-level action files when documenting the scaffold.
 
 ## Risks
 
 - The current git branch still includes the enforced `codex/` prefix even though the session naming scheme omits it.
 - `supabase/.temp/` remains untracked local state and should stay out of slice commits unless explicitly needed.
-- Cycle 5 intentionally reopens branch 05, so branch 06 docs work should wait until the new structure settles.
+- No functional follow-up remains on branch 05 unless a new review finding reopens it.
