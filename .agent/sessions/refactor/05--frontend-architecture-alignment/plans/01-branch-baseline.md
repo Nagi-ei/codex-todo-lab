@@ -147,8 +147,8 @@
   - broad documentation rewrite
   - unrelated style cleanups
 - Planned files:
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/log.md`
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/log.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
 - RED:
   - until full-project verification runs, the refactor branch cannot prove behavioral safety.
 - GREEN:

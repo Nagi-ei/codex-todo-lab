@@ -45,7 +45,7 @@
   - `tests/e2e/todos.smoke.spec.ts`
   - `src/app/todos/page.tsx`
   - `supabase/README.md`
-  - `.ai/sessions/feature/02--todo-domain-and-server-actions/log.md`
+  - `.agent/sessions/feature/02--todo-domain-and-server-actions/log.md`
 - 리스크:
   - smoke에 todo 시나리오가 들어오면 환경 의존 실패가 verify를 막을 수 있음
 
@@ -66,5 +66,5 @@
 - `supabase/.temp/`는 CLI 작업 산출물로 별도 정리 필요
 
 ## Handoff Pointer
-- Write to: `/Users/nagi/Downloads/codex-test/.ai/sessions/feature/02--todo-domain-and-server-actions/handoff.md`
-- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.ai/sessions/feature/02--todo-domain-and-server-actions/plans/01-branch-baseline.md`
+- Write to: `/Users/nagi/Downloads/codex-test/.agent/sessions/feature/02--todo-domain-and-server-actions/handoff.md`
+- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.agent/sessions/feature/02--todo-domain-and-server-actions/plans/01-branch-baseline.md`

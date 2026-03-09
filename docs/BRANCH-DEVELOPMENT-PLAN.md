@@ -6,7 +6,7 @@ PRD와 Master Plan을 실행 가능한 브랜치 단위로 분해하고, 각 브
 ## Naming Convention
 1. Branch format: `<prefix>/<branch-number>--<slug-and-so-on>`
 2. Allowed prefixes: `feature`, `ui`, `refactor`, `fix`
-3. Session folder: `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/`
+3. Session folder: `/Users/nagi/Downloads/codex-test/.agent/sessions/<prefix>/<branch-number>--<slug-and-so-on>/`
 4. Base branch: `main`
 
 ## UI Branching Strategy
@@ -113,7 +113,7 @@ PRD와 Master Plan을 실행 가능한 브랜치 단위로 분해하고, 각 브
 - 리팩토링 이후 기준선에 맞춰 운영 문서와 학습 회고를 정리한다.
 2. Scope
 - README 실행/검증 절차 최신화
-- `.ai` 운영 문서와 docs 정합성 맞춤
+- `.agent` 운영 문서와 docs 정합성 맞춤
 - 구조 리팩토링 결과를 반영한 재진입 문서 정리
 3. Done Criteria
 - 새 세션이 문서만 읽고 재진입 가능

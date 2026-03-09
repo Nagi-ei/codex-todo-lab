@@ -42,5 +42,5 @@
 - 현재 cycle 기준 남은 위험 요소
 
 ## Handoff Pointer
-- Write to: `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/handoff.md`
-- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/plans/01-branch-baseline.md`
+- Write to: `/Users/nagi/Downloads/codex-test/.agent/sessions/<prefix>/<branch-number>--<slug-and-so-on>/handoff.md`
+- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.agent/sessions/<prefix>/<branch-number>--<slug-and-so-on>/plans/01-branch-baseline.md`

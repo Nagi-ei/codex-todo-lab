@@ -101,8 +101,8 @@
 
 - Goal: branch closure artifacts를 완료한다.
 - Verify:
-  - `test -f .ai/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
-  - `test -f .ai/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
+  - `test -f .agent/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
+  - `test -f .agent/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
   - `bun run verify`
 
 ## TDD Cycle (Slice 3)

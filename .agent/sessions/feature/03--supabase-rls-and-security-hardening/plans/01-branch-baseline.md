@@ -47,7 +47,7 @@
   - `docs/BRANCH-DEVELOPMENT-PLAN.md`
   - `docs/MASTER-PLAN.md`
   - `supabase/README.md`
-  - `.ai/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
+  - `.agent/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
 - RED:
   - current docs only state the checklist at a high level and do not define a structured evidence record for branch completion.
 - GREEN:
@@ -55,7 +55,7 @@
 - REFACTOR:
   - remove duplicated wording so branch plan, master plan, and runbook use the same ownership-validation terms.
 - Verify:
-  - `rg -n "운영 검증|A/B|evidence|검증" docs/BRANCH-DEVELOPMENT-PLAN.md docs/MASTER-PLAN.md supabase/README.md .ai/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
+  - `rg -n "운영 검증|A/B|evidence|검증" docs/BRANCH-DEVELOPMENT-PLAN.md docs/MASTER-PLAN.md supabase/README.md .agent/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
 - Failure recovery:
   - if docs disagree on scope or completion criteria, stop execution and re-baseline the plan before any environment validation.
 - Commit:
@@ -75,8 +75,8 @@
   - policy redesign without observed failure
   - automated RLS test harness creation
 - Planned files:
-  - `.ai/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
-  - `.ai/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
+  - `.agent/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
+  - `.agent/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
   - `supabase/README.md`
 - RED:
   - branch 03 cannot be closed because actual A/B isolation evidence is missing.
@@ -104,8 +104,8 @@
   - unrelated docs cleanup
   - release notes for other branches
 - Planned files:
-  - `.ai/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
-  - `.ai/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
+  - `.agent/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
+  - `.agent/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
 - RED:
   - without closure artifacts the branch state is not reusable by the next session.
 - GREEN:
@@ -113,8 +113,8 @@
 - REFACTOR:
   - trim the handoff to current state, remaining issues, and next action only.
 - Verify:
-  - `test -f .ai/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
-  - `test -f .ai/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
+  - `test -f .agent/sessions/feature/03--supabase-rls-and-security-hardening/handoff.md`
+  - `test -f .agent/sessions/feature/03--supabase-rls-and-security-hardening/log.md`
 - Failure recovery:
   - if branch state remains ambiguous, reopen the relevant earlier slice instead of closing with vague notes.
 - Commit:

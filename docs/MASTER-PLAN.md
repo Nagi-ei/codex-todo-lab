@@ -3,9 +3,9 @@
 ## Canonical Documents
 - PRD (canonical): `/Users/nagi/Downloads/codex-test/docs/PRD.md`
 - Branch plan (canonical): `/Users/nagi/Downloads/codex-test/docs/BRANCH-DEVELOPMENT-PLAN.md`
-- Master plan pointer: `/Users/nagi/Downloads/codex-test/.ai/master-plan.md`
-- PRD pointer: `/Users/nagi/Downloads/codex-test/.ai/PRD.md`
-- Branch plan pointer: `/Users/nagi/Downloads/codex-test/.ai/branch-plan.md`
+- Master plan pointer: `/Users/nagi/Downloads/codex-test/.agent/master-plan.md`
+- PRD pointer: `/Users/nagi/Downloads/codex-test/.agent/PRD.md`
+- Branch plan pointer: `/Users/nagi/Downloads/codex-test/.agent/branch-plan.md`
 
 ## Product Goal
 - 학습용 Todo MVP를 Next.js + Supabase + shadcn/ui + Tailwind로 구현한다.

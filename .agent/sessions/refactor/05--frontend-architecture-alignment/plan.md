@@ -158,8 +158,8 @@ src/features/todos/
   - unrelated cleanup
   - branch 06 docs execution
 - Planned files:
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/log.md`
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/log.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
 - RED:
   - until full verification re-runs, cycle 5 cannot prove the action/hook collapse is safe.
 - GREEN:

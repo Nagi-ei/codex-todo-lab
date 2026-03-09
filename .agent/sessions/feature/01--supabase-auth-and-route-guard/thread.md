@@ -51,8 +51,8 @@
   - 보호 라우트는 우선 `src/app/todos/page.tsx` 서버 컴포넌트에서 `getUser()`로 가드
   - 테스트 인프라 미구축 상태라 RED는 명시적 실패 시나리오로 기록
 - 변경 파일:
-  - `.ai/sessions/feature/01--supabase-auth-and-route-guard/thread.md`
-  - `.ai/sessions/feature/01--supabase-auth-and-route-guard/log.md`
+  - `.agent/sessions/feature/01--supabase-auth-and-route-guard/thread.md`
+  - `.agent/sessions/feature/01--supabase-auth-and-route-guard/log.md`
   - `src/lib/supabase/env.ts`
   - `src/lib/supabase/client.ts`
   - `src/lib/supabase/server.ts`
@@ -80,4 +80,4 @@
 - 재검증: `bun run lint && bun run typecheck` 통과
 
 ## Handoff Pointer
-- Write to: `/Users/nagi/Downloads/codex-test/.ai/sessions/<prefix>/<branch-number>--<slug-and-so-on>/handoff.md`
+- Write to: `/Users/nagi/Downloads/codex-test/.agent/sessions/<prefix>/<branch-number>--<slug-and-so-on>/handoff.md`

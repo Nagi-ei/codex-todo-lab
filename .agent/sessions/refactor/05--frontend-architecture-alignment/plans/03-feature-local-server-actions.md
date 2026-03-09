@@ -50,8 +50,8 @@
   - mutation behavior changes
 - Planned files:
   - `SCAFFOLD_STRUCTURE.md`
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/log.md`
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/log.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
 - RED:
   - current scaffold still allows route-level `actions.ts`, which conflicts with the desired “app contains routing only” rule.
 - GREEN:
@@ -108,8 +108,8 @@
   - unrelated cleanup
   - branch 06 documentation execution
 - Planned files:
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/log.md`
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/log.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
 - RED:
   - until full verification re-runs, cycle 3 cannot prove the new action structure is safe.
 - GREEN:

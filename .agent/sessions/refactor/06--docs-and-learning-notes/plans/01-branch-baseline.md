@@ -19,7 +19,7 @@
 - In:
   - rewrite `README.md` from the Next.js template to the actual project runbook
   - add a dedicated learning/re-entry note that explains the current feature boundaries and branch history through branch 05
-  - align canonical docs and `.ai` session guidance where the current wording drifts from the direct Server Action plus feature-hook structure
+  - align canonical docs and `.agent` session guidance where the current wording drifts from the direct Server Action plus feature-hook structure
   - keep branch 06 documentation focused on reproducible commands, current architecture, and next-session re-entry
 - Out:
   - new product behavior or route changes
@@ -56,7 +56,7 @@ docs/
   MASTER-PLAN.md
   BRANCH-DEVELOPMENT-PLAN.md
   LEARNING-NOTES.md
-.ai/sessions/refactor/06--docs-and-learning-notes/
+.agent/sessions/refactor/06--docs-and-learning-notes/
   plan.md
   plans/01-branch-baseline.md
   log.md
@@ -112,7 +112,7 @@ docs/
   - new architectural policy beyond what the canonical docs already define
 - Planned files:
   - `docs/LEARNING-NOTES.md`
-  - `.ai/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
+  - `.agent/sessions/refactor/05--frontend-architecture-alignment/handoff.md`
   - `docs/MASTER-PLAN.md`
   - `docs/BRANCH-DEVELOPMENT-PLAN.md`
 - RED:
@@ -143,8 +143,8 @@ docs/
 - Planned files:
   - `docs/MASTER-PLAN.md`
   - `docs/BRANCH-DEVELOPMENT-PLAN.md`
-  - `.ai/sessions/refactor/06--docs-and-learning-notes/log.md`
-  - `.ai/sessions/refactor/06--docs-and-learning-notes/handoff.md`
+  - `.agent/sessions/refactor/06--docs-and-learning-notes/log.md`
+  - `.agent/sessions/refactor/06--docs-and-learning-notes/handoff.md`
 - RED:
   - until docs are cross-checked and final verify passes, branch 06 cannot prove that its written guidance is safe to follow.
 - GREEN:

@@ -193,7 +193,7 @@
 - ## Out of scope:
   - 새로운 기능 추가
 - ## Planned files:
-  - `.ai/sessions/feature/02--todo-domain-and-server-actions/log.md`
+  - `.agent/sessions/feature/02--todo-domain-and-server-actions/log.md`
   - `tests/e2e/todos.smoke.spec.ts` (필요 시 최소 보강)
 - ## RED:
   - 현재 실패 경로를 놓치는 시나리오를 명시한다.
@@ -226,16 +226,16 @@
   - Planner만 수행, Execution은 다음 단계에서 시작
   - 브랜치 01 결과가 main에 반영되어야 브랜치 02 실행 가능
 - 변경 파일:
-  - `.ai/sessions/feature/02--todo-domain-and-server-actions/thread.md`
-  - `.ai/sessions/feature/02--todo-domain-and-server-actions/log.md`
+  - `.agent/sessions/feature/02--todo-domain-and-server-actions/thread.md`
+  - `.agent/sessions/feature/02--todo-domain-and-server-actions/log.md`
 - 리스크:
   - 현재 기준선(main)과 브랜치 플랜 의존관계(01 선행) 불일치 가능성
 
 ## Verification
 - Commands:
   - `git branch --show-current`
-  - `test -f .ai/sessions/feature/02--todo-domain-and-server-actions/thread.md`
-  - `test -f .ai/sessions/feature/02--todo-domain-and-server-actions/log.md`
+  - `test -f .agent/sessions/feature/02--todo-domain-and-server-actions/thread.md`
+  - `test -f .agent/sessions/feature/02--todo-domain-and-server-actions/log.md`
 - 결과 요약:
   - 브랜치: `feature/02--todo-domain-and-server-actions`
   - 세션 파일 생성 완료
@@ -251,4 +251,4 @@
   - 현재 브랜치가 `feature/02--todo-domain-and-server-actions`인지 확인
 
 ## Handoff Pointer
-- Write to: `/Users/nagi/Downloads/codex-test/.ai/sessions/feature/02--todo-domain-and-server-actions/handoff.md`
+- Write to: `/Users/nagi/Downloads/codex-test/.agent/sessions/feature/02--todo-domain-and-server-actions/handoff.md`

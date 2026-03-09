@@ -34,7 +34,7 @@
 
 ## Implementation Notes
 - 주요 결정: `AGENTS.md`는 전역 원칙과 스킬 라우팅만 유지하고, 프론트엔드 상세 규칙과 리뷰 기준은 전용 스킬을 정본으로 사용
-- 변경 파일: `AGENTS.md`, `.ai/sessions/docs/agents/plan.md`, `.ai/sessions/docs/agents/log.md`, `.ai/sessions/docs/agents/handoff.md`
+- 변경 파일: `AGENTS.md`, `.agent/sessions/docs/agents/plan.md`, `.agent/sessions/docs/agents/log.md`, `.agent/sessions/docs/agents/handoff.md`
 - 리스크: 스킬 문서가 변경되면 `AGENTS.md`의 라우팅 링크가 계속 유효해야 함
 
 ## Verification
@@ -52,5 +52,5 @@
 - 기존 코드 구조와 scaffold 기준 사이의 간극은 여전히 남아 있다.
 
 ## Handoff Pointer
-- Write to: `/Users/nagi/Downloads/codex-test/.ai/sessions/docs/agents/handoff.md`
-- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.ai/sessions/docs/agents/plans/01-branch-baseline.md`
+- Write to: `/Users/nagi/Downloads/codex-test/.agent/sessions/docs/agents/handoff.md`
+- Snapshot archive example: `/Users/nagi/Downloads/codex-test/.agent/sessions/docs/agents/plans/01-branch-baseline.md`
