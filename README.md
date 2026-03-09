@@ -1,36 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learning Todo App
 
-## Getting Started
+Learning Todo App is a small Next.js App Router project built to practice:
 
-First, run the development server:
+- email-based auth with Supabase
+- user-scoped Todo CRUD with RLS
+- a route-entry-only `src/app` structure
+- feature-local Server Actions and UI mutation hooks
+- TDD-style branch execution with repeatable verification
+
+## Stack
+
+- Next.js App Router
+- React + TypeScript
+- Bun
+- Supabase
+- TanStack Query
+- Zod
+- shadcn/ui + Tailwind CSS
+- Vitest
+- Playwright
+
+## Requirements
+
+- Bun installed
+- A Supabase project
+- Local environment variables configured
+
+## Environment Variables
+
+Create `.env.local` with the values used by this app:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=...
+SUPABASE_SECRET_KEY=...
+SUPABASE_AUTO_CONFIRM_EMAILS=false
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Notes:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` are required by the app.
+- `SUPABASE_SECRET_KEY` is server-only and is used for admin-only helpers or validation flows.
+- `SUPABASE_AUTO_CONFIRM_EMAILS=true` is useful for local testing and is enabled automatically by the Playwright web server.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Install
 
-## Learn More
+```bash
+bun install
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Run Locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Start the app:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+bun run dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Verification
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Full project verification:
+
+```bash
+bun run verify
+```
+
+Individual commands:
+
+```bash
+bun run typecheck
+bun run lint
+bun run test:unit
+bun run test:e2e:smoke
+```
+
+Playwright smoke tests run the app on port `3001` through the configured `webServer` in [playwright.config.ts](/Users/nagi/Downloads/codex-test/playwright.config.ts).
+
+## Routes
+
+- `/`: simple entry page
+- `/auth`: login and signup
+- `/auth/check-email`: post-signup guidance
+- `/todos`: protected Todo page
+- `/todos?filter=all|active|completed`: filtered Todo view
+
+Unauthenticated users are redirected from `/todos` to `/auth`.
+
+## Architecture
+
+This repository follows the rules in [AGENTS.md](/Users/nagi/Downloads/codex-test/AGENTS.md) and [SCAFFOLD_STRUCTURE.md](/Users/nagi/Downloads/codex-test/SCAFFOLD_STRUCTURE.md).
+
+Current architectural rules:
+
+- `src/app` contains route entry files only.
+- Reads are handled in Server Components or feature services used by Server Components.
+- Writes use feature-local Server Actions under `src/features/<domain>/actions`.
+- UI-side mutation orchestration lives in feature hooks under `src/features/<domain>/hooks`.
+- Shared SDK setup and global utilities stay in `src/lib`.
+
+## Project Structure
+
+```text
+src/
+  app/
+    auth/
+    todos/
+  features/
+    auth/
+      actions/
+      services/
+      types/
+    todos/
+      actions/
+      hooks/
+      presentation/
+      schema/
+      services/
+      types/
+  components/
+    auth/
+    todos/
+    ui/
+    providers/
+  lib/
+    supabase/
+```
+
+High-level ownership:
+
+- `src/app/todos/page.tsx` resolves search params, redirects unauthenticated users, and renders the page composition.
+- `src/features/todos/services/todo-read.ts` owns the Todo read path for the page.
+- `src/features/todos/actions/*` own Todo mutation boundaries.
+- `src/features/todos/hooks/*` own client-side mutation orchestration such as `useMutation`, refresh, and feedback handling.
+- `src/features/auth/actions/*` own auth mutations such as login, signup, and logout.
+
+## Database and Supabase Notes
+
+- The Todo table migration lives in `supabase/migrations/`.
+- The Supabase runbook lives in [supabase/README.md](/Users/nagi/Downloads/codex-test/supabase/README.md).
+- CLI-first migration application is the default workflow.
+- RLS validation for user isolation was documented as an operational validation branch before this docs branch.
+
+## Tests
+
+Unit tests cover the Todo domain contracts and behavior:
+
+- schema validation
+- filter parsing
+- presentation mapping
+- read-error handling
+- action create/update/toggle/delete behavior
+
+Smoke E2E covers:
+
+- auth flow
+- protected route access
+- Todo create/filter/toggle/delete flow
+
+## Related Docs
+
+- Product requirements: [docs/PRD.md](/Users/nagi/Downloads/codex-test/docs/PRD.md)
+- Master plan: [docs/MASTER-PLAN.md](/Users/nagi/Downloads/codex-test/docs/MASTER-PLAN.md)
+- Branch plan: [docs/BRANCH-DEVELOPMENT-PLAN.md](/Users/nagi/Downloads/codex-test/docs/BRANCH-DEVELOPMENT-PLAN.md)
+- Scaffold rules: [SCAFFOLD_STRUCTURE.md](/Users/nagi/Downloads/codex-test/SCAFFOLD_STRUCTURE.md)
+- Learning notes: [docs/LEARNING-NOTES.md](/Users/nagi/Downloads/codex-test/docs/LEARNING-NOTES.md)
+
+## Re-entry Checklist
+
+If you are returning to this repository after a break:
+
+1. Read [docs/MASTER-PLAN.md](/Users/nagi/Downloads/codex-test/docs/MASTER-PLAN.md).
+2. Read [docs/BRANCH-DEVELOPMENT-PLAN.md](/Users/nagi/Downloads/codex-test/docs/BRANCH-DEVELOPMENT-PLAN.md).
+3. Read [SCAFFOLD_STRUCTURE.md](/Users/nagi/Downloads/codex-test/SCAFFOLD_STRUCTURE.md).
+4. Read [docs/LEARNING-NOTES.md](/Users/nagi/Downloads/codex-test/docs/LEARNING-NOTES.md).
+5. Run `bun run verify` before changing behavior.
