@@ -10,6 +10,9 @@ This repository focuses on:
 - feature-local Server Actions and UI mutation hooks
 - repeatable verification with unit tests and smoke E2E
 
+## Screenshot
+<img width="1688" height="1256" alt="image" src="https://github.com/user-attachments/assets/a2ea5243-5ea3-450a-b6df-c7a76d2ca786" />
+
 ## Stack
 
 - Next.js App Router
