@@ -1,12 +1,14 @@
-# Learning Todo App
+# Codex Todo Lab
 
-Learning Todo App is a small Next.js App Router project built to practice:
+Codex Todo Lab is a small Next.js App Router project used to practice Codex workflows through a simple Todo app.
 
-- email-based auth with Supabase
-- user-scoped Todo CRUD with RLS
-- a route-entry-only `src/app` structure
+This repository focuses on:
+
+- Codex-driven planning, execution, verification, and replan flow
+- branch-based development with explicit session artifacts
+- email-based auth and user-scoped Todo CRUD with Supabase
 - feature-local Server Actions and UI mutation hooks
-- TDD-style branch execution with repeatable verification
+- repeatable verification with unit tests and smoke E2E
 
 ## Stack
 
